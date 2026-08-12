@@ -1,0 +1,55 @@
+.app-shell { min-height: 100vh; display: grid; grid-template-columns: 245px 1fr; background: var(--paper); }
+.sidebar { position: sticky; top: 0; height: 100vh; padding: 25px 18px; display: flex; flex-direction: column; border-right: 1px solid var(--line); background: white; }
+.workspace-chip { margin: 34px 0 25px; padding: 10px; display: flex; align-items: center; gap: 10px; border: 1px solid var(--line); border-radius: 10px; }
+.workspace-chip > span { display: grid; place-items: center; width: 32px; height: 32px; border-radius: 8px; background: var(--mint); color: var(--green); font-weight: 800; }
+.workspace-chip div { min-width: 0; display: flex; flex-direction: column; }
+.workspace-chip small { color: var(--muted); font-size: 10px; }
+.workspace-chip strong { overflow: hidden; font-size: 13px; text-overflow: ellipsis; white-space: nowrap; }
+.sidebar nav { display: flex; flex-direction: column; gap: 5px; }
+.sidebar nav a { padding: 10px 12px; display: flex; gap: 11px; border-radius: 8px; color: var(--muted); font-size: 14px; font-weight: 600; }
+.sidebar nav a:hover, .sidebar nav a.active { background: var(--mint); color: var(--green-dark); }
+.sidebar nav a span { width: 18px; text-align: center; }
+.sign-out { margin-top: auto; padding: 10px 12px; border: 0; background: transparent; color: var(--muted); text-align: left; cursor: pointer; }
+.demo-badge { margin-top: auto; padding: 9px 12px; border-radius: 8px; background: var(--mint); color: var(--green); font-size: 12px; font-weight: 750; text-align: center; }
+.dashboard-main { max-width: 1400px; width: 100%; margin: 0 auto; padding: 40px clamp(25px, 4vw, 60px); }
+.dashboard-header { display: flex; justify-content: space-between; align-items: flex-end; gap: 25px; }
+.dashboard-header h1 { margin: 0 0 5px; font-family: Georgia, serif; font-size: 40px; font-weight: 500; letter-spacing: -.03em; }
+.dashboard-header > div > p:last-child { margin: 0; color: var(--muted); }
+.metrics { margin: 32px 0 20px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+.metric-card, .panel { border: 1px solid var(--line); border-radius: 12px; background: white; }
+.metric-card { padding: 22px; display: flex; flex-direction: column; }
+.metric-card p { margin: 0 0 15px; color: var(--muted); font-size: 13px; font-weight: 650; }
+.metric-card strong { font-family: Georgia, serif; font-size: 34px; font-weight: 500; }
+.metric-card small { margin-top: 8px; color: #87908a; }
+.dashboard-grid { display: grid; grid-template-columns: minmax(380px, 1.1fr) minmax(300px, .9fr); gap: 20px; }
+.panel { padding: 24px; }
+.panel-heading { display: flex; justify-content: space-between; align-items: start; gap: 15px; }
+.panel-heading h2 { margin: 0 0 5px; font-size: 17px; }
+.panel-heading p { margin: 0; color: var(--muted); font-size: 13px; }
+.panel-heading > span { color: var(--green); font-size: 12px; font-weight: 700; }
+.progress { height: 5px; margin: 20px 0 14px; overflow: hidden; border-radius: 10px; background: #e9eeeb; }
+.progress i { display: block; width: 25%; height: 100%; background: var(--green); }
+.checklist { margin: 0; padding: 0; list-style: none; }
+.checklist li { padding: 15px 3px; display: grid; grid-template-columns: 32px 1fr 15px; align-items: center; gap: 10px; border-bottom: 1px solid #edf0ee; }
+.checklist li:last-child { border: 0; }
+.checklist li > span { display: grid; place-items: center; width: 27px; height: 27px; border: 1px solid var(--line); border-radius: 50%; color: var(--muted); font-size: 12px; }
+.checklist li.done > span { border-color: var(--green); background: var(--green); color: white; }
+.checklist strong { font-size: 13px; }
+.checklist p { margin: 3px 0 0; color: var(--muted); font-size: 12px; }
+.checklist b { color: #a2aaa5; }
+.empty-state { min-height: 270px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+.empty-state > span { margin-bottom: 14px; display: grid; place-items: center; width: 43px; height: 43px; border-radius: 50%; background: var(--mint); color: var(--green); }
+.empty-state strong { font-size: 14px; }
+.empty-state p { max-width: 230px; margin: 6px 0 0; color: var(--muted); font-size: 12px; line-height: 1.5; }
+
+@media (max-width: 900px) { .dashboard-grid { grid-template-columns: 1fr; } }
+@media (max-width: 700px) {
+  .app-shell { grid-template-columns: 1fr; }
+  .sidebar { position: static; height: auto; padding: 18px; }
+  .workspace-chip, .sign-out { display: none; }
+  .sidebar nav { margin-top: 18px; flex-direction: row; overflow-x: auto; }
+  .sidebar nav a { white-space: nowrap; }
+  .dashboard-main { padding: 28px 18px; }
+  .dashboard-header { align-items: start; flex-direction: column; }
+  .metrics { grid-template-columns: 1fr; }
+}
