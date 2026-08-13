@@ -9,7 +9,7 @@ const tools = [
 
 export function DashboardPage() {
   return (
-    <main className="tools-page">
+    <main className="tools-page dashboard-page">
       <ToolNav />
       <section className="dashboard-hero">
         <p className="eyebrow">Your training room</p>
@@ -18,7 +18,7 @@ export function DashboardPage() {
       </section>
       <section className="tool-grid">
         {tools.map((tool) => (
-          <Link className="tool-card" href={tool.href} key={tool.href}>
+          <Link className="tool-card glow-button" data-glow href={tool.href} key={tool.href}>
             <span>{tool.number}</span><h2>{tool.title}</h2><p>{tool.text}</p><b>Open tool →</b>
           </Link>
         ))}

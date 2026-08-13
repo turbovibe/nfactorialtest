@@ -4,12 +4,12 @@
 .game-layout { display: grid; grid-template-columns: minmax(400px, 680px) minmax(300px, 1fr); gap: clamp(30px, 6vw, 90px); padding-top: 34px; }
 .board-area { width: 100%; }
 .player-row { min-height: 54px; display: flex; align-items: center; gap: 12px; }
-.player-avatar { width: 34px; height: 34px; display: grid; place-items: center; border-radius: 50%; background: var(--ink); color: var(--white); font-size: 13px; }
+.player-avatar { width: 34px; height: 34px; display: grid; place-items: center; border: 1px solid rgba(255,163,19,.35); border-radius: 50%; background: rgba(255,163,19,.1); color: #ffc15a; font-size: 13px; }
 .player-row div { display: flex; flex-direction: column; }
 .player-row b { font-size: 14px; }
 .player-row small { color: var(--muted); font: 10px 'DM Mono'; }
 
-.chessboard { box-sizing: border-box; width: 100%; aspect-ratio: 1; display: grid; grid-template: repeat(8, minmax(0, 1fr)) / repeat(8, minmax(0, 1fr)); overflow: hidden; border: 10px solid var(--forest); box-shadow: 0 24px 55px rgba(22, 36, 64, .18); }
+.chessboard { box-sizing: border-box; width: 100%; aspect-ratio: 1; display: grid; grid-template: repeat(8, minmax(0, 1fr)) / repeat(8, minmax(0, 1fr)); overflow: hidden; border: 10px solid #111823; border-radius: 6px; box-shadow: 0 28px 65px rgba(0,0,0,.42), 0 0 0 1px #303a48; }
 .square { position: relative; display: grid; place-items: center; width: 100%; min-width: 0; min-height: 0; padding: 0; overflow: hidden; border: 0; border-radius: 0; }
 .square:disabled { cursor: default; }
 .square--light { background: var(--gray); }
@@ -30,21 +30,21 @@
 .square--dark .rank-label, .square--dark .file-label { color: rgba(255, 255, 255, .84); }
 
 .game-sidebar { padding-top: 54px; }
-.rival-panel, .time-machine { border: 1px solid var(--line); background: var(--white); }
+.rival-panel, .time-machine { border: 1px solid var(--line); border-radius: 14px; background: linear-gradient(145deg, rgba(255,255,255,.05), rgba(255,255,255,.015)); box-shadow: 0 20px 50px rgba(0,0,0,.22); }
 .rival-panel { padding: 24px; }
 .rival-heading { display: flex; align-items: center; gap: 13px; }
-.rival-avatar { width: 46px; height: 46px; display: grid; place-items: center; background: var(--forest); color: var(--lime); font-size: 28px; }
+.rival-avatar { width: 46px; height: 46px; display: grid; place-items: center; border: 1px solid rgba(255,163,19,.3); border-radius: 10px; background: rgba(255,163,19,.09); color: #ffc15a; font-size: 28px; }
 .rival-heading div:nth-child(2) { flex: 1; }
 .rival-heading span, .time-machine__heading span { color: var(--muted); font: 9px 'DM Mono'; text-transform: uppercase; letter-spacing: .08em; }
 .rival-heading h2, .time-machine__heading h2 { margin: 2px 0 0; font-size: 18px; }
 .rival-heading i { width: 8px; height: 8px; border-radius: 50%; background: var(--lime); }
 .thinking-pulse { animation: pulse 1s infinite; }
 @keyframes pulse { 50% { transform: scale(1.8); opacity: .5; } }
-.rival-panel blockquote { margin: 22px 0; padding: 18px; background: var(--gray); color: var(--forest); font-family: Georgia, serif; font-size: 17px; line-height: 1.45; }
+.rival-panel blockquote { margin: 22px 0; padding: 18px; border-left: 2px solid var(--gold); border-radius: 0 8px 8px 0; background: rgba(255,163,19,.07); color: #d9dee7; font-family: Georgia, serif; font-size: 17px; line-height: 1.45; }
 .reading__label { display: flex; justify-content: space-between; font: 10px 'DM Mono'; text-transform: uppercase; }
-.reading__label strong { color: var(--forest); }
+.reading__label strong { color: #ffc15a; }
 .meter { height: 4px; margin: 10px 0; background: var(--line); }
-.meter span { display: block; height: 100%; background: var(--forest); transition: width .4s; }
+.meter span { display: block; height: 100%; background: linear-gradient(90deg, #d68000, #ffc15a); box-shadow: 0 0 12px rgba(255,163,19,.35); transition: width .4s; }
 .reading p { margin: 0; color: var(--muted); font-size: 12px; }
 
 .time-machine { margin-top: 16px; padding: 22px 24px; }
@@ -54,9 +54,9 @@
 .timeline__step { position: relative; flex: 0 0 52px; padding: 18px 2px 0; border: 0; border-top: 2px solid var(--line); background: transparent; color: var(--muted); font: 9px 'DM Mono'; }
 .timeline__step i { position: absolute; width: 9px; height: 9px; top: -5px; left: calc(50% - 4px); border-radius: 50%; background: var(--line); }
 .timeline__step i.has-clue { background: var(--gold); }
-.timeline__step--active { color: var(--ink); font-weight: 600; border-color: var(--forest); }
-.timeline__step--active i { background: var(--forest); transform: scale(1.25); }
-.detective-clue { display: flex; gap: 12px; margin-top: 16px; padding: 13px; border-left: 3px solid var(--gold); background: var(--gray); }
+.timeline__step--active { color: var(--ink); font-weight: 600; border-color: var(--gold); }
+.timeline__step--active i { background: var(--gold); box-shadow: 0 0 10px rgba(255,163,19,.45); transform: scale(1.25); }
+.detective-clue { display: flex; gap: 12px; margin-top: 16px; padding: 13px; border-left: 3px solid var(--gold); border-radius: 0 8px 8px 0; background: rgba(255,163,19,.07); }
 .detective-clue > span { color: var(--gold); font-size: 24px; }
 .detective-clue b { font: 10px 'DM Mono'; text-transform: uppercase; }
 .detective-clue p { margin: 4px 0 0; font-size: 12px; line-height: 1.4; }

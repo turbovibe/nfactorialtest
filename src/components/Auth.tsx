@@ -48,7 +48,7 @@ export function Auth({ onSignIn }: AuthProps) {
     try {
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
-        options: { redirectTo: `${window.location.origin}/home` },
+        options: { redirectTo: window.location.origin },
       });
 
       if (error) setMessage(error.message);
@@ -96,7 +96,7 @@ export function Auth({ onSignIn }: AuthProps) {
           minLength={6}
           required
         />
-        <button type="submit" disabled={busy}>
+        <button className="glow-button" data-glow type="submit" disabled={busy}>
           {busy ? 'Please wait…' : mode === 'signin' ? 'Sign in' : 'Create account'}
         </button>
       </form>
@@ -108,7 +108,8 @@ export function Auth({ onSignIn }: AuthProps) {
 
       <div className="auth-divider"><span>or</span></div>
       <button
-        className="google-sign-in"
+        className="google-sign-in glow-button"
+        data-glow
         type="button"
         onClick={handleGoogleSignIn}
         disabled={busy}

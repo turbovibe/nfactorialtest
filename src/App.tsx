@@ -1,3 +1,4 @@
+import { useRef } from 'react';
 import { Route, Switch } from 'wouter';
 import { HomePage } from './pages/HomePage';
 import { GamePage } from './pages/GamePage';
@@ -7,20 +8,24 @@ import { ProtectedRoute } from './components/ProtectedRoute';
 import { DashboardPage } from './pages/DashboardPage';
 import { TimeMachinePage } from './pages/TimeMachinePage';
 import { DetectivePage } from './pages/DetectivePage';
+import { usePointerGlow } from './lib/usePointerGlow';
 
 export default function App() {
+  const appRef = useRef<HTMLDivElement>(null);
+  usePointerGlow(appRef);
+
   return (
-    <Switch>
-      <Route path="/" component={HomePage} />
-      <Route path="/login" component={AuthPage} />
-      <Route path="/auth" component={AuthPage} />
-      <Route path="/home"><ProtectedRoute><DashboardPage /></ProtectedRoute></Route>
-      <Route path="/game">
-        <ProtectedRoute><GamePage /></ProtectedRoute>
-      </Route>
-      <Route path="/time-machine"><ProtectedRoute><TimeMachinePage /></ProtectedRoute></Route>
-      <Route path="/detective"><ProtectedRoute><DetectivePage /></ProtectedRoute></Route>
-      <Route component={NotFoundPage} />
-    </Switch>
+    <div className="app-shell" ref={appRef}>
+      <Switch>
+        <Route path="/" component={HomePage} />
+        <Route path="/login" component={AuthPage} />
+        <Route path="/auth" component={AuthPage} />
+        <Route path="/home"><ProtectedRoute><DashboardPage /></ProtectedRoute></Route>
+        <Route path="/game"><ProtectedRoute><GamePage /></ProtectedRoute></Route>
+        <Route path="/time-machine"><ProtectedRoute><TimeMachinePage /></ProtectedRoute></Route>
+        <Route path="/detective"><ProtectedRoute><DetectivePage /></ProtectedRoute></Route>
+        <Route component={NotFoundPage} />
+      </Switch>
+    </div>
   );
 }

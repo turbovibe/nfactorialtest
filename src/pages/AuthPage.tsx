@@ -10,6 +10,12 @@ export function AuthPage() {
     void supabase.auth.getSession().then(({ data }) => {
       if (data.session) navigate('/home', { replace: true });
     });
+
+    const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (session) navigate('/home', { replace: true });
+    });
+
+    return () => listener.subscription.unsubscribe();
   }, [navigate]);
 
   return (
@@ -20,7 +26,7 @@ export function AuthPage() {
       </nav>
 
       <div className="auth-page__content">
-        <Auth onSignIn={() => navigate('/home')} />
+        <Auth onSignIn={() => navigate('/home', { replace: true })} />
         <aside className="auth-page__note" aria-hidden="true">
           <span className="auth-page__knight">♞</span>
           <p>Every move tells Echo a little more about you.</p>
