@@ -1,0 +1,76 @@
+.game-page { max-width: 1320px; min-height: 100vh; margin: auto; padding: 0 44px 60px; }
+.game-nav__actions { display: flex; align-items: center; gap: 20px; color: var(--muted); font: 11px 'DM Mono'; }
+.game-nav button { border: 1px solid var(--line); padding: 9px 13px; background: transparent; color: var(--ink); }
+.game-layout { display: grid; grid-template-columns: minmax(400px, 680px) minmax(300px, 1fr); gap: clamp(30px, 6vw, 90px); padding-top: 34px; }
+.board-area { width: 100%; }
+.player-row { min-height: 54px; display: flex; align-items: center; gap: 12px; }
+.player-avatar { width: 34px; height: 34px; display: grid; place-items: center; border-radius: 50%; background: var(--ink); color: var(--white); font-size: 13px; }
+.player-row div { display: flex; flex-direction: column; }
+.player-row b { font-size: 14px; }
+.player-row small { color: var(--muted); font: 10px 'DM Mono'; }
+
+.chessboard { box-sizing: border-box; width: 100%; aspect-ratio: 1; display: grid; grid-template: repeat(8, minmax(0, 1fr)) / repeat(8, minmax(0, 1fr)); overflow: hidden; border: 10px solid var(--forest); box-shadow: 0 24px 55px rgba(22, 36, 64, .18); }
+.square { position: relative; display: grid; place-items: center; width: 100%; min-width: 0; min-height: 0; padding: 0; overflow: hidden; border: 0; border-radius: 0; }
+.square:disabled { cursor: default; }
+.square--light { background: var(--gray); }
+.square--dark { background: var(--navy); }
+.square--selected { box-shadow: inset 0 0 0 5px var(--lime); }
+.piece { z-index: 2; display: grid; place-items: center; width: 100%; height: 100%; font-family: 'Times New Roman', Georgia, serif; font-size: clamp(34px, 5.5vw, 68px); font-weight: 700; line-height: 1; transform: translateY(-2%); user-select: none; }
+.piece--interactive { cursor: grab; touch-action: none; }
+.piece--interactive:active { cursor: grabbing; }
+.piece--dragging { opacity: 0; }
+.dragged-piece { position: fixed; z-index: 1000; display: grid; place-items: center; font-family: 'Times New Roman', Georgia, serif; font-size: clamp(34px, 5.5vw, 68px); font-weight: 700; line-height: 1; pointer-events: none; user-select: none; will-change: left, top, transform; transition: transform 90ms cubic-bezier(.2, .8, .3, 1.25); filter: drop-shadow(0 12px 8px rgba(0, 0, 0, .25)); }
+.piece--w { color: var(--white); -webkit-text-stroke: 1.4px var(--black); paint-order: stroke fill; text-shadow: 0 2px 2px rgba(0, 0, 0, .3); }
+.piece--b { color: var(--black); -webkit-text-stroke: 1.4px var(--white); paint-order: stroke fill; text-shadow: 0 2px 2px rgba(255, 255, 255, .3); }
+.move-dot { position: absolute; z-index: 3; width: 18%; aspect-ratio: 1; border-radius: 50%; background: rgba(255, 163, 19, .92); }
+.capture-ring { position: absolute; z-index: 3; inset: 8%; border: 5px solid var(--lime); border-radius: 50%; }
+.rank-label, .file-label { position: absolute; z-index: 4; color: rgba(0, 0, 0, .78); font: 600 clamp(8px, .85vw, 11px) 'DM Mono'; pointer-events: none; }
+.rank-label { top: 5px; left: 6px; }
+.file-label { right: 6px; bottom: 4px; }
+.square--dark .rank-label, .square--dark .file-label { color: rgba(255, 255, 255, .84); }
+
+.game-sidebar { padding-top: 54px; }
+.rival-panel, .time-machine { border: 1px solid var(--line); background: var(--white); }
+.rival-panel { padding: 24px; }
+.rival-heading { display: flex; align-items: center; gap: 13px; }
+.rival-avatar { width: 46px; height: 46px; display: grid; place-items: center; background: var(--forest); color: var(--lime); font-size: 28px; }
+.rival-heading div:nth-child(2) { flex: 1; }
+.rival-heading span, .time-machine__heading span { color: var(--muted); font: 9px 'DM Mono'; text-transform: uppercase; letter-spacing: .08em; }
+.rival-heading h2, .time-machine__heading h2 { margin: 2px 0 0; font-size: 18px; }
+.rival-heading i { width: 8px; height: 8px; border-radius: 50%; background: var(--lime); }
+.thinking-pulse { animation: pulse 1s infinite; }
+@keyframes pulse { 50% { transform: scale(1.8); opacity: .5; } }
+.rival-panel blockquote { margin: 22px 0; padding: 18px; background: var(--gray); color: var(--forest); font-family: Georgia, serif; font-size: 17px; line-height: 1.45; }
+.reading__label { display: flex; justify-content: space-between; font: 10px 'DM Mono'; text-transform: uppercase; }
+.reading__label strong { color: var(--forest); }
+.meter { height: 4px; margin: 10px 0; background: var(--line); }
+.meter span { display: block; height: 100%; background: var(--forest); transition: width .4s; }
+.reading p { margin: 0; color: var(--muted); font-size: 12px; }
+
+.time-machine { margin-top: 16px; padding: 22px 24px; }
+.time-machine__heading { display: flex; justify-content: space-between; align-items: start; }
+.time-machine__heading b { padding: 5px 7px; background: var(--lime); font: 8px 'DM Mono'; }
+.timeline { display: flex; gap: 0; margin: 22px 0 10px; overflow-x: auto; padding-bottom: 7px; }
+.timeline__step { position: relative; flex: 0 0 52px; padding: 18px 2px 0; border: 0; border-top: 2px solid var(--line); background: transparent; color: var(--muted); font: 9px 'DM Mono'; }
+.timeline__step i { position: absolute; width: 9px; height: 9px; top: -5px; left: calc(50% - 4px); border-radius: 50%; background: var(--line); }
+.timeline__step i.has-clue { background: var(--gold); }
+.timeline__step--active { color: var(--ink); font-weight: 600; border-color: var(--forest); }
+.timeline__step--active i { background: var(--forest); transform: scale(1.25); }
+.detective-clue { display: flex; gap: 12px; margin-top: 16px; padding: 13px; border-left: 3px solid var(--gold); background: var(--gray); }
+.detective-clue > span { color: var(--gold); font-size: 24px; }
+.detective-clue b { font: 10px 'DM Mono'; text-transform: uppercase; }
+.detective-clue p { margin: 4px 0 0; font-size: 12px; line-height: 1.4; }
+
+@media (max-width: 900px) {
+  .game-page { padding: 0 20px 50px; }
+  .game-layout { grid-template-columns: 1fr; gap: 22px; }
+  .game-sidebar { padding-top: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .time-machine { margin-top: 0; }
+}
+@media (max-width: 620px) {
+  .game-nav__actions span { display: none; }
+  .game-sidebar { display: block; }
+  .time-machine { margin-top: 16px; }
+  .chessboard { border-width: 6px; }
+  .piece { font-size: 10vw; }
+}
