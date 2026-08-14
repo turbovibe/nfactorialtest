@@ -20,7 +20,7 @@ export function EloSelector({ elo, engineStatus, onChange }: EloSelectorProps) {
     <div className="elo-selector">
       <div className="elo-selector__heading">
         <label htmlFor="elo-level">Opponent strength</label>
-        <strong>{elo} Elo</strong>
+        <strong>{elo} Elo{elo === 3200 ? ' · Max' : ''}</strong>
       </div>
       <div className="elo-slider">
         <div className="elo-slider__fill" style={{ width: `${progress}%` }} />
@@ -33,9 +33,11 @@ export function EloSelector({ elo, engineStatus, onChange }: EloSelectorProps) {
           step="100"
           value={elo}
           onInput={(event) => onChange(Number(event.currentTarget.value))}
+          onChange={(event) => onChange(Number(event.currentTarget.value))}
         />
       </div>
       <div className="elo-selector__scale"><span>100</span><span>3200</span></div>
+      <small className="elo-selector__note">1320–3190 native range · 3200 uses maximum strength</small>
       <small className={`engine-status engine-status--${engineStatus}`}>{statusText[engineStatus]}</small>
     </div>
   );

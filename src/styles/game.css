@@ -48,11 +48,12 @@
 .elo-slider { position: relative; height: 18px; margin: 10px 9px 2px; }
 .elo-slider::before, .elo-slider__fill { position: absolute; top: 7px; left: 0; height: 5px; border-radius: 10px; content: ''; }
 .elo-slider::before { width: 100%; background: var(--line); }
-.elo-slider__fill { background: var(--gold); }
-.elo-slider__thumb { position: absolute; top: 0; width: 18px; height: 18px; border: 3px solid #141b26; border-radius: 50%; background: var(--gold); box-shadow: 0 0 0 1px #ffc15a; transform: translateX(-50%); }
-.elo-slider input { position: absolute; inset: 0 -9px; width: calc(100% + 18px); height: 18px; margin: 0; opacity: 0; cursor: grab; }
+.elo-slider__fill { background: var(--gold); pointer-events: none; }
+.elo-slider__thumb { position: absolute; top: 0; width: 18px; height: 18px; border: 3px solid #141b26; border-radius: 50%; background: var(--gold); box-shadow: 0 0 0 1px #ffc15a; pointer-events: none; transform: translateX(-50%); }
+.elo-slider input { position: absolute; z-index: 2; inset: 0 -9px; width: calc(100% + 18px); height: 18px; margin: 0; opacity: 0; cursor: grab; touch-action: none; }
 .elo-slider input:active { cursor: grabbing; }
 .elo-selector__scale { color: var(--muted); font: 9px 'DM Mono'; }
+.elo-selector__note { display: block; margin-top: 8px; color: var(--muted); font: 9px 'DM Mono'; }
 .engine-status { display: block; margin-top: 10px; color: var(--muted); font: 10px 'DM Mono'; }
 .engine-status::before { content: ''; display: inline-block; width: 6px; height: 6px; margin-right: 7px; border-radius: 50%; background: var(--muted); }
 .engine-status--ready::before { background: var(--lime); }

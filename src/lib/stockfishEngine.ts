@@ -64,10 +64,16 @@ class StockfishEngine {
       }, 5_000);
       this.pendingSearch = { resolve, timeout };
       const engineElo = Math.max(1320, Math.min(3190, elo));
-      this.worker.postMessage('setoption name UCI_LimitStrength value true');
-      this.worker.postMessage(`setoption name UCI_Elo value ${engineElo}`);
+      const maximumStrength = elo >= 3200;
+      this.worker.postMessage(`setoption name UCI_LimitStrength value ${maximumStrength ? 'false' : 'true'}`);
+      if (maximumStrength) {
+        this.worker.postMessage('setoption name Skill Level value 20');
+      } else {
+        this.worker.postMessage(`setoption name UCI_Elo value ${engineElo}`);
+      }
       this.worker.postMessage(`position fen ${fen}`);
-      this.worker.postMessage('go movetime 450');
+      const thinkTime = Math.round(300 + (Math.min(elo, 3200) / 3200) * 900);
+      this.worker.postMessage(`go movetime ${thinkTime}`);
     });
   }
 }
