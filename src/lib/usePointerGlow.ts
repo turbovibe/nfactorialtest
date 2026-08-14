@@ -1,7 +1,7 @@
 import { useEffect, type RefObject } from 'react';
 
 const BUTTON_GLOW_DISTANCE = 180;
-const GLOW_TARGETS = 'button:not(.square), a[href]:not(.brand)';
+const GLOW_TARGETS = 'button:not(.square):not(.timeline__step), a[href]:not(.brand)';
 
 export function usePointerGlow(containerRef: RefObject<HTMLElement>) {
   useEffect(() => {

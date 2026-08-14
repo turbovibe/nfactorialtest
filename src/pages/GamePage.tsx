@@ -1,19 +1,22 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Chess, type Square } from 'chess.js';
 import { ToolNav } from '../components/ToolNav';
 import { ChessBoard } from '../components/ChessBoard';
 import { RivalPanel } from '../components/RivalPanel';
 import { TimeMachine, type TimelineEntry } from '../components/TimeMachine';
 import {
-  chooseRivalMove,
   emptyProfile,
   investigateMove,
   updateProfile,
   type PlayerProfile,
 } from '../lib/chessRival';
+import { explainPlayerMove, startExplanation } from '../lib/moveExplanation';
+import { useRivalTurn } from '../lib/useRivalTurn';
 
 const initialGame = new Chess();
-const initialTimeline: TimelineEntry[] = [{ fen: initialGame.fen(), move: 'Start' }];
+const initialTimeline: TimelineEntry[] = [{
+  fen: initialGame.fen(), move: 'Start', actor: 'Start', explanation: startExplanation,
+}];
 
 function gameMessage(game: Chess, isThinking: boolean): string {
   if (game.isCheckmate()) return game.turn() === 'w' ? 'Echo wins — rewind and investigate.' : 'You checkmated Echo!';
@@ -29,8 +32,11 @@ export function GamePage() {
   const [profile, setProfile] = useState<PlayerProfile>(emptyProfile);
   const [timeline, setTimeline] = useState<TimelineEntry[]>(initialTimeline);
   const [viewIndex, setViewIndex] = useState(0);
-  const [isThinking, setIsThinking] = useState(false);
+  const [elo, setElo] = useState(1200);
   const game = useMemo(() => new Chess(fen), [fen]);
+  const { isThinking, engineStatus, resetEngineStatus } = useRivalTurn({
+    game, profile, elo, setFen, setTimeline, setViewIndex,
+  });
   const isPresent = viewIndex === timeline.length - 1;
   const viewedFen = timeline[viewIndex]?.fen ?? fen;
 
@@ -38,27 +44,6 @@ export function GamePage() {
     if (!selected || !isPresent) return [];
     return game.moves({ square: selected, verbose: true }).map((move) => move.to);
   }, [game, isPresent, selected]);
-
-  useEffect(() => {
-    if (game.turn() !== 'b' || game.isGameOver()) return;
-    setIsThinking(true);
-    const timer = window.setTimeout(() => {
-      const next = new Chess(game.fen());
-      const rivalMove = chooseRivalMove(next, profile);
-      if (rivalMove) {
-        const played = next.move(rivalMove.san);
-        const entry = { fen: next.fen(), move: `…${played.san}` };
-        setFen(next.fen());
-        setTimeline((current) => {
-          const updated = [...current, entry];
-          setViewIndex(updated.length - 1);
-          return updated;
-        });
-      }
-      setIsThinking(false);
-    }, 650);
-    return () => window.clearTimeout(timer);
-  }, [game, profile]);
 
   function playFrom(square: Square) {
     if (!isPresent || isThinking || game.turn() !== 'w' || game.isGameOver()) return;
@@ -86,7 +71,10 @@ export function GamePage() {
     const played = next.move(legalMove.san);
     const clue = investigateMove(before, played) ?? undefined;
     const newProfile = updateProfile(profile, played);
-    const entry = { fen: next.fen(), move: played.san, clue };
+    const entry: TimelineEntry = {
+      fen: next.fen(), move: played.san, actor: 'You',
+      explanation: explainPlayerMove(played), clue,
+    };
     setProfile(newProfile);
     setFen(next.fen());
     setTimeline((current) => {
@@ -101,9 +89,9 @@ export function GamePage() {
     setFen(fresh.fen());
     setSelected(undefined);
     setProfile(emptyProfile);
-    setTimeline([{ fen: fresh.fen(), move: 'Start' }]);
+    setTimeline([{ fen: fresh.fen(), move: 'Start', actor: 'Start', explanation: startExplanation }]);
     setViewIndex(0);
-    setIsThinking(false);
+    resetEngineStatus();
   }
 
   return (
@@ -124,7 +112,13 @@ export function GamePage() {
           />
         </section>
         <div className="game-sidebar">
-          <RivalPanel profile={profile} isThinking={isThinking} />
+          <RivalPanel
+            profile={profile}
+            isThinking={isThinking}
+            elo={elo}
+            engineStatus={engineStatus}
+            onEloChange={setElo}
+          />
           <TimeMachine entries={timeline} activeIndex={viewIndex} onSelect={(index) => { setSelected(undefined); setViewIndex(index); }} />
         </div>
       </div>

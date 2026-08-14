@@ -1,6 +1,8 @@
 export type TimelineEntry = {
   fen: string;
   move: string;
+  actor: 'Start' | 'You' | 'Echo';
+  explanation: string;
   clue?: string;
 };
 
@@ -15,7 +17,7 @@ export function TimeMachine({ entries, activeIndex, onSelect }: TimeMachineProps
     <section className="time-machine">
       <div className="time-machine__heading">
         <div><span>Time machine</span><h2>Replay the thinking</h2></div>
-        {activeIndex < entries.length - 1 && <b>PAST POSITION</b>}
+        <b>{activeIndex < entries.length - 1 ? 'PAST POSITION' : `${entries.length - 1} MOVES`}</b>
       </div>
       <div className="timeline">
         {entries.map((entry, index) => (
@@ -29,6 +31,10 @@ export function TimeMachine({ entries, activeIndex, onSelect }: TimeMachineProps
             <span>{index === 0 ? 'Start' : entry.move}</span>
           </button>
         ))}
+      </div>
+      <div className="move-explanation">
+        <div><span>{entries[activeIndex].actor}</span><strong>{entries[activeIndex].move}</strong></div>
+        <p>{entries[activeIndex].explanation}</p>
       </div>
       {entries[activeIndex]?.clue && (
         <div className="detective-clue"><span>⌕</span><div><b>Detective clue</b><p>{entries[activeIndex].clue}</p></div></div>
