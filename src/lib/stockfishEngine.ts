@@ -1,5 +1,4 @@
 const stockfishScriptUrl = '/stockfish/stockfish-18-lite-single.js';
-const stockfishWasmUrl = '/stockfish/stockfish-18-lite-single.wasm';
 
 export type EngineStatus = 'idle' | 'loading' | 'ready' | 'fallback';
 
@@ -14,17 +13,21 @@ class StockfishEngine {
   private pendingSearch?: PendingSearch;
 
   constructor() {
-    const workerUrl = `${stockfishScriptUrl}#${encodeURIComponent(stockfishWasmUrl)},worker`;
-    this.worker = new Worker(workerUrl);
+    this.worker = new Worker(stockfishScriptUrl);
     this.ready = new Promise((resolve, reject) => {
+      const timeout = window.setTimeout(() => reject(new Error('Stockfish startup timed out')), 10_000);
       const handleReady = (event: MessageEvent<string>) => {
         if (event.data === 'uciok') {
+          window.clearTimeout(timeout);
           this.worker.removeEventListener('message', handleReady);
           resolve();
         }
       };
       this.worker.addEventListener('message', handleReady);
-      this.worker.addEventListener('error', () => reject(new Error('Stockfish failed to load')), { once: true });
+      this.worker.addEventListener('error', () => {
+        window.clearTimeout(timeout);
+        reject(new Error('Stockfish failed to load'));
+      }, { once: true });
       this.worker.postMessage('uci');
     });
     this.worker.addEventListener('message', (event: MessageEvent<string>) => {

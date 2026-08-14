@@ -1,9 +1,7 @@
-import type { CSSProperties } from 'react';
 import type { EngineStatus } from '../lib/stockfishEngine';
 
 type EloSelectorProps = {
   elo: number;
-  disabled: boolean;
   engineStatus: EngineStatus;
   onChange: (elo: number) => void;
 };
@@ -15,7 +13,7 @@ const statusText: Record<EngineStatus, string> = {
   fallback: 'Backup bot active',
 };
 
-export function EloSelector({ elo, disabled, engineStatus, onChange }: EloSelectorProps) {
+export function EloSelector({ elo, engineStatus, onChange }: EloSelectorProps) {
   const progress = ((elo - 100) / 3100) * 100;
 
   return (
@@ -24,17 +22,19 @@ export function EloSelector({ elo, disabled, engineStatus, onChange }: EloSelect
         <label htmlFor="elo-level">Opponent strength</label>
         <strong>{elo} Elo</strong>
       </div>
-      <input
-        id="elo-level"
-        type="range"
-        min="100"
-        max="3200"
-        step="100"
-        value={elo}
-        disabled={disabled}
-        style={{ '--elo-progress': `${progress}%` } as CSSProperties}
-        onChange={(event) => onChange(Number(event.target.value))}
-      />
+      <div className="elo-slider">
+        <div className="elo-slider__fill" style={{ width: `${progress}%` }} />
+        <div className="elo-slider__thumb" style={{ left: `${progress}%` }} />
+        <input
+          id="elo-level"
+          type="range"
+          min="100"
+          max="3200"
+          step="100"
+          value={elo}
+          onInput={(event) => onChange(Number(event.currentTarget.value))}
+        />
+      </div>
       <div className="elo-selector__scale"><span>100</span><span>3200</span></div>
       <small className={`engine-status engine-status--${engineStatus}`}>{statusText[engineStatus]}</small>
     </div>

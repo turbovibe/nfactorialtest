@@ -24,7 +24,6 @@ export function RivalPanel({ profile, isThinking, elo, engineStatus, onEloChange
       <blockquote>“{isThinking ? 'Let me rethink this position…' : rivalThought(profile)}”</blockquote>
       <EloSelector
         elo={elo}
-        disabled={isThinking}
         engineStatus={engineStatus}
         onChange={onEloChange}
       />
