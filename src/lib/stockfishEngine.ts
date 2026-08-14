@@ -15,20 +15,29 @@ class StockfishEngine {
   constructor() {
     this.worker = new Worker(stockfishScriptUrl);
     this.ready = new Promise((resolve, reject) => {
-      const timeout = window.setTimeout(() => reject(new Error('Stockfish startup timed out')), 10_000);
+      let retry: number;
+      const stopHandshake = () => {
+        window.clearInterval(retry);
+        window.clearTimeout(timeout);
+      };
+      const timeout = window.setTimeout(() => {
+        stopHandshake();
+        reject(new Error('Stockfish startup timed out'));
+      }, 15_000);
       const handleReady = (event: MessageEvent<string>) => {
         if (event.data === 'uciok') {
-          window.clearTimeout(timeout);
+          stopHandshake();
           this.worker.removeEventListener('message', handleReady);
           resolve();
         }
       };
       this.worker.addEventListener('message', handleReady);
       this.worker.addEventListener('error', () => {
-        window.clearTimeout(timeout);
+        stopHandshake();
         reject(new Error('Stockfish failed to load'));
       }, { once: true });
       this.worker.postMessage('uci');
+      retry = window.setInterval(() => this.worker.postMessage('uci'), 750);
     });
     this.worker.addEventListener('message', (event: MessageEvent<string>) => {
       if (!event.data.startsWith('bestmove ') || !this.pendingSearch) return;
