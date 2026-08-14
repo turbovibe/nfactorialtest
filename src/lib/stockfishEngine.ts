@@ -1,5 +1,5 @@
-import stockfishScriptUrl from 'stockfish/bin/stockfish-18-lite-single.js?url';
-import stockfishWasmUrl from 'stockfish/bin/stockfish-18-lite-single.wasm?url';
+const stockfishScriptUrl = '/stockfish/stockfish-18-lite-single.js';
+const stockfishWasmUrl = '/stockfish/stockfish-18-lite-single.wasm';
 
 export type EngineStatus = 'idle' | 'loading' | 'ready' | 'fallback';
 
