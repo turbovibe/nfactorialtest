@@ -76,9 +76,12 @@ class StockfishEngine {
       this.worker.postMessage(`go movetime ${thinkTime}`);
     });
   }
+
+  terminate() {
+    this.worker.terminate();
+  }
 }
 
-let engine: StockfishEngine | undefined;
 let searchQueue = Promise.resolve<string | null>(null);
 
 function addBeginnerMistakes(bestMove: string | null, legalMoves: string[], elo: number): string | null {
@@ -89,7 +92,13 @@ function addBeginnerMistakes(bestMove: string | null, legalMoves: string[], elo:
 }
 
 export function findStockfishMove(fen: string, elo: number, legalMoves: string[]): Promise<string | null> {
-  engine ??= new StockfishEngine();
-  searchQueue = searchQueue.catch(() => null).then(() => engine?.findMove(fen, elo) ?? null);
+  searchQueue = searchQueue.catch(() => null).then(async () => {
+    const engine = new StockfishEngine();
+    try {
+      return await engine.findMove(fen, elo);
+    } finally {
+      engine.terminate();
+    }
+  });
   return searchQueue.then((move) => addBeginnerMistakes(move, legalMoves, elo));
 }

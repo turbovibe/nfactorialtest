@@ -1,4 +1,4 @@
-import { useEffect, useState, type Dispatch, type SetStateAction } from 'react';
+import { useEffect, useRef, useState, type Dispatch, type SetStateAction } from 'react';
 import { Chess } from 'chess.js';
 import type { TimelineEntry } from '../components/TimeMachine';
 import { chooseRivalMove, type PlayerProfile } from './chessRival';
@@ -16,8 +16,13 @@ type RivalTurnOptions = {
 
 export function useRivalTurn(options: RivalTurnOptions) {
   const { game, profile, elo, setFen, setTimeline, setViewIndex } = options;
+  const eloRef = useRef(elo);
   const [isThinking, setIsThinking] = useState(false);
   const [engineStatus, setEngineStatus] = useState<EngineStatus>('idle');
+
+  useEffect(() => {
+    eloRef.current = elo;
+  }, [elo]);
 
   useEffect(() => {
     if (game.turn() !== 'b' || game.isGameOver()) return;
@@ -28,7 +33,8 @@ export function useRivalTurn(options: RivalTurnOptions) {
       const legalMoves = next.moves({ verbose: true });
       setEngineStatus('loading');
       const engineMove = await findStockfishMove(
-        next.fen(), elo, legalMoves.map((move) => `${move.from}${move.to}${move.promotion ?? ''}`),
+        next.fen(), eloRef.current,
+        legalMoves.map((move) => `${move.from}${move.to}${move.promotion ?? ''}`),
       ).catch(() => null);
       if (cancelled) return;
       setEngineStatus(engineMove ? 'ready' : 'fallback');
@@ -55,7 +61,7 @@ export function useRivalTurn(options: RivalTurnOptions) {
       cancelled = true;
       window.clearTimeout(timer);
     };
-  }, [elo, game, profile, setFen, setTimeline, setViewIndex]);
+  }, [game, profile, setFen, setTimeline, setViewIndex]);
 
   return {
     isThinking,
