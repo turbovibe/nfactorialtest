@@ -1,11 +1,12 @@
 import { useRef, useState, type PointerEvent } from 'react';
-import { Chess, type Square } from 'chess.js';
+import { Chess, type Color, type Square } from 'chess.js';
 
 type ChessBoardProps = {
   fen: string;
   selected?: Square;
   targets?: Square[];
   interactive?: boolean;
+  playerColor: Color;
   onSquareClick?: (square: Square) => void;
   onMove?: (from: Square, to: Square) => void;
 };
@@ -29,7 +30,7 @@ type PieceDrag = {
   angle: number;
 };
 
-export function ChessBoard({ fen, selected, targets = [], interactive, onSquareClick, onMove }: ChessBoardProps) {
+export function ChessBoard({ fen, selected, targets = [], interactive, playerColor, onSquareClick, onMove }: ChessBoardProps) {
   const [drag, setDrag] = useState<PieceDrag>();
   const lastPointer = useRef({ x: 0, y: 0 });
   const hasMoved = useRef(false);
@@ -39,6 +40,7 @@ export function ChessBoard({ fen, selected, targets = [], interactive, onSquareC
     const rank = 8 - Math.floor(index / 8);
     return `${file}${rank}` as Square;
   });
+  if (playerColor === 'b') squares.reverse();
 
   function startDragging(event: PointerEvent<HTMLSpanElement>, square: Square, symbol: string) {
     if (event.button !== 0) return;
@@ -49,7 +51,7 @@ export function ChessBoard({ fen, selected, targets = [], interactive, onSquareC
     setDrag({
       from: square,
       symbol,
-      color: 'w',
+      color: playerColor,
       x: event.clientX,
       y: event.clientY,
       grabX: event.clientX - bounds.left,
@@ -99,9 +101,9 @@ export function ChessBoard({ fen, selected, targets = [], interactive, onSquareC
           >
             {piece && (
               <span
-                className={`piece piece--${piece.color} ${interactive && piece.color === 'w' ? 'piece--interactive' : ''} ${drag?.from === square ? 'piece--dragging' : ''}`}
+                className={`piece piece--${piece.color} ${interactive && piece.color === playerColor ? 'piece--interactive' : ''} ${drag?.from === square ? 'piece--dragging' : ''}`}
                 onClick={(event) => event.stopPropagation()}
-                onPointerDown={interactive && piece.color === 'w' ? (event) => startDragging(event, square, symbols[`${piece.color}${piece.type}`]) : undefined}
+                onPointerDown={interactive && piece.color === playerColor ? (event) => startDragging(event, square, symbols[`${piece.color}${piece.type}`]) : undefined}
                 onPointerMove={moveDraggedPiece}
                 onPointerUp={stopDragging}
                 onPointerCancel={() => setDrag(undefined)}

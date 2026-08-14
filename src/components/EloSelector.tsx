@@ -16,6 +16,10 @@ const statusText: Record<EngineStatus, string> = {
 export function EloSelector({ elo, engineStatus, onChange }: EloSelectorProps) {
   const progress = ((elo - 100) / 3100) * 100;
 
+  function changeElo(event: React.ChangeEvent<HTMLInputElement>) {
+    onChange(event.currentTarget.valueAsNumber);
+  }
+
   return (
     <div className="elo-selector">
       <div className="elo-selector__heading">
@@ -32,8 +36,8 @@ export function EloSelector({ elo, engineStatus, onChange }: EloSelectorProps) {
           max="3200"
           step="100"
           value={elo}
-          onInput={(event) => onChange(Number(event.currentTarget.value))}
-          onChange={(event) => onChange(Number(event.currentTarget.value))}
+          onChange={changeElo}
+          aria-valuetext={`${elo} Elo${elo === 3200 ? ', maximum' : ''}`}
         />
       </div>
       <div className="elo-selector__scale"><span>100</span><span>3200</span></div>

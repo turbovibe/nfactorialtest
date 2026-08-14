@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, type Dispatch, type SetStateAction } from 'react';
-import { Chess } from 'chess.js';
+import { Chess, type Color } from 'chess.js';
 import type { TimelineEntry } from '../components/TimeMachine';
 import { chooseRivalMove, type PlayerProfile } from './chessRival';
 import { explainRivalMove } from './moveExplanation';
@@ -9,13 +9,14 @@ type RivalTurnOptions = {
   game: Chess;
   profile: PlayerProfile;
   elo: number;
+  playerColor: Color;
   setFen: Dispatch<SetStateAction<string>>;
   setTimeline: Dispatch<SetStateAction<TimelineEntry[]>>;
   setViewIndex: Dispatch<SetStateAction<number>>;
 };
 
 export function useRivalTurn(options: RivalTurnOptions) {
-  const { game, profile, elo, setFen, setTimeline, setViewIndex } = options;
+  const { game, profile, elo, playerColor, setFen, setTimeline, setViewIndex } = options;
   const eloRef = useRef(elo);
   const [isThinking, setIsThinking] = useState(false);
   const [engineStatus, setEngineStatus] = useState<EngineStatus>('idle');
@@ -25,7 +26,7 @@ export function useRivalTurn(options: RivalTurnOptions) {
   }, [elo]);
 
   useEffect(() => {
-    if (game.turn() !== 'b' || game.isGameOver()) return;
+    if (game.turn() === playerColor || game.isGameOver()) return;
     let cancelled = false;
     setIsThinking(true);
     const timer = window.setTimeout(async () => {
@@ -61,7 +62,7 @@ export function useRivalTurn(options: RivalTurnOptions) {
       cancelled = true;
       window.clearTimeout(timer);
     };
-  }, [game, profile, setFen, setTimeline, setViewIndex]);
+  }, [game, playerColor, profile, setFen, setTimeline, setViewIndex]);
 
   return {
     isThinking,

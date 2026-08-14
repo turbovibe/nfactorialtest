@@ -1,6 +1,12 @@
 .game-page { max-width: 1320px; min-height: 100vh; margin: auto; padding: 0 44px 60px; }
 .game-nav__actions { display: flex; align-items: center; gap: 20px; color: var(--muted); font: 11px 'DM Mono'; }
 .game-nav button { border: 1px solid var(--line); padding: 9px 13px; background: transparent; color: var(--ink); }
+.game-toolbar { display: flex; align-items: center; gap: 12px; }
+.game-toolbar > span { margin-right: auto; }
+.color-selector { display: flex; align-items: center; gap: 4px; color: var(--muted); font: 10px 'DM Mono'; text-transform: uppercase; }
+.color-selector button { padding: 7px 10px; border: 1px solid var(--line); background: transparent; color: var(--muted); }
+.color-selector button:hover { border-color: rgba(255,163,19,.5); color: var(--ink); }
+.color-selector .color-selector__active { border-color: var(--gold); background: rgba(255,163,19,.12); color: #ffc15a; }
 .game-layout { display: grid; grid-template-columns: minmax(400px, 680px) minmax(300px, 1fr); gap: clamp(30px, 6vw, 90px); padding-top: 34px; }
 .board-area { width: 100%; }
 .player-row { min-height: 54px; display: flex; align-items: center; gap: 12px; }
@@ -41,6 +47,7 @@
 .thinking-pulse { animation: pulse 1s infinite; }
 @keyframes pulse { 50% { transform: scale(1.8); opacity: .5; } }
 .rival-panel blockquote { margin: 22px 0; padding: 18px; border-left: 2px solid var(--gold); border-radius: 0 8px 8px 0; background: rgba(255,163,19,.07); color: #d9dee7; font-family: Georgia, serif; font-size: 17px; line-height: 1.45; }
+.rival-comment--loading { color: var(--muted) !important; }
 .elo-selector { margin-bottom: 22px; padding-bottom: 20px; border-bottom: 1px solid var(--line); }
 .elo-selector__heading, .elo-selector__scale { display: flex; justify-content: space-between; align-items: center; }
 .elo-selector__heading label { color: var(--muted); font: 10px 'DM Mono'; text-transform: uppercase; }
@@ -95,6 +102,7 @@
   .time-machine { margin-top: 0; }
 }
 @media (max-width: 620px) {
+  .game-toolbar > span, .color-selector > span { display: none; }
   .game-nav__actions span { display: none; }
   .game-sidebar { display: block; }
   .time-machine { margin-top: 16px; }

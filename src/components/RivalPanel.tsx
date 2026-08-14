@@ -1,17 +1,19 @@
 import type { PlayerProfile } from '../lib/chessRival';
-import { adaptationSummary, profileLabel, rivalThought, styleConfidence } from '../lib/chessRival';
+import { adaptationSummary, profileLabel, styleConfidence } from '../lib/chessRival';
 import { EloSelector } from './EloSelector';
 import type { EngineStatus } from '../lib/stockfishEngine';
 
 type RivalPanelProps = {
   profile: PlayerProfile;
   isThinking: boolean;
+  commentary: string;
+  isCommenting: boolean;
   elo: number;
   engineStatus: EngineStatus;
   onEloChange: (elo: number) => void;
 };
 
-export function RivalPanel({ profile, isThinking, elo, engineStatus, onEloChange }: RivalPanelProps) {
+export function RivalPanel({ profile, isThinking, commentary, isCommenting, elo, engineStatus, onEloChange }: RivalPanelProps) {
   const confidence = styleConfidence(profile);
 
   return (
@@ -19,9 +21,9 @@ export function RivalPanel({ profile, isThinking, elo, engineStatus, onEloChange
       <div className="rival-heading">
         <div className="rival-avatar">♞</div>
         <div><span>Your adaptive rival</span><h2>Echo</h2></div>
-        <i className={isThinking ? 'thinking-pulse' : ''} />
+        <i className={isThinking || isCommenting ? 'thinking-pulse' : ''} />
       </div>
-      <blockquote>“{isThinking ? 'Let me rethink this position…' : rivalThought(profile)}”</blockquote>
+      <blockquote aria-live="polite" className={isCommenting ? 'rival-comment--loading' : ''}>“{commentary}”</blockquote>
       <EloSelector
         elo={elo}
         engineStatus={engineStatus}

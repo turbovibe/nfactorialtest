@@ -96,8 +96,7 @@ export function adaptationSummary(profile: PlayerProfile): string {
 }
 
 export function styleConfidence(profile: PlayerProfile): number {
-  if (profile.moves === 0) return 0;
-  return Math.min(94, 20 + profile.moves * 14);
+  return Math.min(100, profile.moves * 20);
 }
 
 export function rivalThought(profile: PlayerProfile): string {
