@@ -18,6 +18,10 @@ export function useBoardAnnotations(positionKey: string) {
   }, [positionKey]);
 
   function startArrow(event: PointerEvent<HTMLButtonElement>, square: Square) {
+    if (event.button === 0) {
+      clearAnnotations();
+      return;
+    }
     if (event.button !== 2) return;
     event.preventDefault();
     event.currentTarget.setPointerCapture(event.pointerId);
@@ -59,6 +63,13 @@ export function useBoardAnnotations(positionKey: string) {
     setArrows((current) => current.some((item) => item.from === arrow.from && item.to === arrow.to)
       ? current.filter((item) => item.from !== arrow.from || item.to !== arrow.to)
       : [...current, arrow]);
+  }
+
+  function clearAnnotations() {
+    setMarkedSquares(new Set());
+    setArrows([]);
+    setDraft(undefined);
+    draftRef.current = undefined;
   }
 
   function preventMenu(event: MouseEvent) {

@@ -13,8 +13,17 @@ export function BoardAnnotations({ arrows, orientation }: BoardAnnotationsProps)
   return (
     <svg aria-hidden="true" className="board-annotations" viewBox="0 0 800 800">
       <defs>
-        <marker id={markerId} markerHeight="5" markerWidth="5" orient="auto" refX="4.5" refY="2.5">
-          <path d="M 0 0 L 5 2.5 L 0 5 Z" />
+        <marker
+          id={markerId}
+          markerHeight="42"
+          markerUnits="userSpaceOnUse"
+          markerWidth="42"
+          orient="auto"
+          refX="9"
+          refY="5"
+          viewBox="0 0 10 10"
+        >
+          <path d="M 0 0 L 10 5 L 0 10 Z" />
         </marker>
       </defs>
       {arrows.map((arrow, index) => (

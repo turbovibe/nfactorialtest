@@ -7,6 +7,7 @@ import { GameToolbar } from '../components/GameToolbar';
 import { RivalPanel } from '../components/RivalPanel';
 import { TimeMachine } from '../components/TimeMachine';
 import { saveLatestGame, type TimelineEntry } from '../lib/gameTimeline';
+import { findMoveSquares } from '../lib/moveSquares';
 import {
   emptyProfile,
   updateProfile,
@@ -44,6 +45,7 @@ export function GamePage() {
   );
   const isPresent = viewIndex === timeline.length - 1;
   const viewedFen = timeline[viewIndex]?.fen ?? fen;
+  const lastMove = useMemo(() => findMoveSquares(timeline, viewIndex), [timeline, viewIndex]);
 
   useEffect(() => {
     saveLatestGame({ entries: timeline, playerColor });
@@ -131,6 +133,7 @@ export function GamePage() {
         <GameBoardArea
           game={game}
           fen={viewedFen}
+          lastMove={lastMove}
           selected={selected}
           targets={targets}
           playerColor={playerColor}

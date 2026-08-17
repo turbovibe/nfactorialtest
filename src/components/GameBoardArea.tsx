@@ -1,11 +1,13 @@
 import type { Chess, Color, Square } from 'chess.js';
 import { getGameMessage, getGameResult } from '../lib/gameMessage';
+import type { MoveSquares } from '../lib/moveSquares';
 import { ChessBoard } from './ChessBoard';
 import { GameEndOverlay } from './GameEndOverlay';
 
 type GameBoardAreaProps = {
   game: Chess;
   fen: string;
+  lastMove?: MoveSquares;
   selected?: Square;
   targets: Square[];
   playerColor: Color;
@@ -21,7 +23,7 @@ type GameBoardAreaProps = {
 
 export function GameBoardArea(props: GameBoardAreaProps) {
   const {
-    game, fen, selected, targets, playerColor, isThinking, isGameOver, resigned,
+    game, fen, lastMove, selected, targets, playerColor, isThinking, isGameOver, resigned,
     showEndOverlay, onSquareClick, onMove, onNewGame, onReview,
   } = props;
   const result = getGameResult(game, playerColor, resigned);
@@ -35,6 +37,7 @@ export function GameBoardArea(props: GameBoardAreaProps) {
       <div className={showEndOverlay ? 'board-stage board-stage--ended' : 'board-stage'}>
         <ChessBoard
           fen={fen}
+          lastMove={lastMove}
           selected={selected}
           targets={targets}
           interactive={!isThinking && !isGameOver}
