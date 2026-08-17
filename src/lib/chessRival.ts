@@ -110,12 +110,3 @@ export function chooseRivalMove(game: Chess, profile: PlayerProfile): Move | nul
   return moves.map((move) => ({ move, score: moveScore(game, move, style) + Math.random() * 0.12 }))
     .sort((a, b) => b.score - a.score)[0].move;
 }
-
-export function investigateMove(game: Chess, chosen: Move): string | null {
-  const moves = game.moves({ verbose: true });
-  const best = Math.max(...moves.map((move) => moveScore(game, move, 'balanced')));
-  if (best - moveScore(game, chosen, 'balanced') < 1.5) return null;
-  if (moves.some((move) => move.captured === 'q')) return 'A queen was available. Which piece could reach it?';
-  if (moves.some((move) => move.captured === 'r')) return 'There was a loose rook here. Trace every attack.';
-  return 'A forcing move was hiding here. Look for checks and captures first.';
-}

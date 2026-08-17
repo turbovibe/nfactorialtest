@@ -72,28 +72,35 @@
 .meter span { display: block; height: 100%; background: linear-gradient(90deg, #d68000, #ffc15a); box-shadow: 0 0 12px rgba(255,163,19,.35); transition: width .4s; }
 .reading p { margin: 0; color: var(--muted); font-size: 12px; }
 
-.time-machine { min-height: 286px; margin-top: 16px; padding: 26px; }
+.time-machine { min-height: 210px; margin-top: 16px; padding: 28px; }
 .time-machine__heading { display: flex; justify-content: space-between; align-items: start; }
 .time-machine__heading b { padding: 5px 7px; background: var(--lime); font: 8px 'DM Mono'; }
-.timeline { display: flex; gap: 0; margin: 25px 0 16px; overflow-x: auto; padding: 3px 1px 10px; }
-.timeline__step { position: relative; flex: 0 0 66px; padding: 18px 4px 0; border: 0; border-top: 2px solid var(--line); background: transparent; color: var(--muted); font: 10px 'DM Mono'; }
-.timeline__step i { position: absolute; width: 9px; height: 9px; top: -5px; left: calc(50% - 4px); border-radius: 50%; background: var(--line); }
-.timeline__step i.has-clue { background: var(--gold); }
-.timeline__step--active { color: var(--ink); font-weight: 600; border-color: var(--gold); }
-.timeline__step--active i { background: var(--gold); box-shadow: 0 0 10px rgba(255,163,19,.45); transform: scale(1.25); }
+.timeline { display: flex; gap: 0; margin: 28px 0 18px; overflow-x: auto; padding: 10px 2px 16px; }
+.timeline__step { --rating: #596273; position: relative; flex: 0 0 84px; min-height: 62px; padding: 30px 6px 4px; border: 0; border-top: 4px solid var(--line); background: transparent; color: var(--muted); font: 11px 'DM Mono'; cursor: pointer; }
+.timeline__step i { position: absolute; width: 18px; height: 18px; top: -11px; left: calc(50% - 9px); border: 3px solid #11161e; border-radius: 50%; background: var(--rating); box-shadow: 0 0 0 2px var(--rating); transition: transform .18s, box-shadow .18s; }
+.timeline__step:hover i { transform: scale(1.2); }
+.timeline__step--blunder { --rating: #ef5b5b; }
+.timeline__step--inaccuracy { --rating: #f1c84b; }
+.timeline__step--book { --rating: #9a704f; }
+.timeline__step--fine { --rating: #579b65; }
+.timeline__step--good { --rating: #7acb78; }
+.timeline__step--brilliant { --rating: #72cce5; }
+.timeline__step--active { color: var(--ink); font-weight: 600; border-color: var(--rating); }
+.timeline__step--active i { box-shadow: 0 0 0 3px #11161e, 0 0 0 5px var(--rating), 0 0 16px var(--rating); transform: scale(1.18); }
 .timeline__step:focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; border-radius: 2px; }
-.move-explanation { min-height: 92px; padding: 15px 16px; border: 1px solid var(--line); border-radius: 9px; background: rgba(255,255,255,.025); }
-.move-explanation div { display: flex; align-items: center; gap: 10px; }
-.move-explanation span { padding: 3px 6px; border-radius: 4px; background: rgba(255,163,19,.12); color: var(--gold); font: 9px 'DM Mono'; text-transform: uppercase; }
-.move-explanation strong { font: 600 13px 'DM Mono'; }
-.move-explanation p { margin: 9px 0 0; color: #c8ced8; font-size: 12px; line-height: 1.5; }
+.timeline-locked { margin: 28px 0 0; padding: 20px; border: 1px dashed var(--line); border-radius: 9px; color: var(--muted); font-size: 12px; text-align: center; }
+.rating-legend { display: flex; flex-wrap: wrap; gap: 9px 14px; color: var(--muted); font: 9px 'DM Mono'; }
+.rating-legend span { display: flex; align-items: center; gap: 5px; }
+.rating-legend i { width: 8px; height: 8px; border-radius: 50%; background: #596273; }
+.rating-legend__blunder i { background: #ef5b5b; }
+.rating-legend__inaccuracy i { background: #f1c84b; }
+.rating-legend__book i { background: #9a704f; }
+.rating-legend__fine i { background: #579b65; }
+.rating-legend__good i { background: #7acb78; }
+.rating-legend__brilliant i { background: #72cce5; }
 .reading p { display: grid; gap: 4px; }
 .reading p strong { color: var(--ink); font-size: 12px; }
 .reading p span { color: var(--muted); line-height: 1.45; }
-.detective-clue { display: flex; gap: 12px; margin-top: 16px; padding: 13px; border-left: 3px solid var(--gold); border-radius: 0 8px 8px 0; background: rgba(255,163,19,.07); }
-.detective-clue > span { color: var(--gold); font-size: 24px; }
-.detective-clue b { font: 10px 'DM Mono'; text-transform: uppercase; }
-.detective-clue p { margin: 4px 0 0; font-size: 12px; line-height: 1.4; }
 
 @media (max-width: 900px) {
   .game-page { padding: 0 20px 50px; }

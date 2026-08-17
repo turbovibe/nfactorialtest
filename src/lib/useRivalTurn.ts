@@ -2,8 +2,8 @@ import { useEffect, useRef, useState, type Dispatch, type SetStateAction } from 
 import { Chess, type Color } from 'chess.js';
 import type { TimelineEntry } from '../components/TimeMachine';
 import { chooseRivalMove, type PlayerProfile } from './chessRival';
-import { explainRivalMove } from './moveExplanation';
 import { findStockfishMove, type EngineStatus } from './stockfishEngine';
+import { rateMove } from './moveRating';
 
 type RivalTurnOptions = {
   game: Chess;
@@ -45,12 +45,12 @@ export function useRivalTurn(options: RivalTurnOptions) {
         : chooseRivalMove(next, profile);
       if (rivalMove) {
         const played = next.move(rivalMove.san);
-        const entry: TimelineEntry = {
-          fen: next.fen(), move: `…${played.san}`, actor: 'Echo',
-          explanation: explainRivalMove(played, profile),
-        };
         setFen(next.fen());
         setTimeline((current) => {
+          const entry: TimelineEntry = {
+            fen: next.fen(), move: `…${played.san}`,
+            rating: rateMove(played, next, current.length),
+          };
           const updated = [...current, entry];
           setViewIndex(updated.length - 1);
           return updated;

@@ -7,17 +7,16 @@ import { RivalPanel } from '../components/RivalPanel';
 import { TimeMachine, type TimelineEntry } from '../components/TimeMachine';
 import {
   emptyProfile,
-  investigateMove,
   updateProfile,
   type PlayerProfile,
 } from '../lib/chessRival';
-import { explainPlayerMove, startExplanation } from '../lib/moveExplanation';
 import { useRivalTurn } from '../lib/useRivalTurn';
 import { useMoveCommentary } from '../lib/useMoveCommentary';
+import { rateMove } from '../lib/moveRating';
 
 const initialGame = new Chess();
 const initialTimeline: TimelineEntry[] = [{
-  fen: initialGame.fen(), move: 'Start', actor: 'Start', explanation: startExplanation,
+  fen: initialGame.fen(), move: 'Start',
 }];
 
 function gameMessage(game: Chess, isThinking: boolean, playerColor: Color): string {
@@ -74,10 +73,8 @@ export function GamePage() {
     const next = new Chess(game.fen());
     const played = next.move(legalMove.san);
     void commentOnMove(before, played, next);
-    const clue = investigateMove(before, played) ?? undefined;
     const entry: TimelineEntry = {
-      fen: next.fen(), move: played.san, actor: 'You',
-      explanation: explainPlayerMove(played), clue,
+      fen: next.fen(), move: played.san, rating: rateMove(played, next, timeline.length),
     };
     setProfile((currentProfile) => updateProfile(currentProfile, played));
     setFen(next.fen());
@@ -93,7 +90,7 @@ export function GamePage() {
     setFen(fresh.fen());
     setSelected(undefined);
     setProfile(emptyProfile);
-    setTimeline([{ fen: fresh.fen(), move: 'Start', actor: 'Start', explanation: startExplanation }]);
+    setTimeline([{ fen: fresh.fen(), move: 'Start' }]);
     setViewIndex(0);
     resetEngineStatus();
     resetCommentary();
@@ -137,7 +134,7 @@ export function GamePage() {
             engineStatus={engineStatus}
             onEloChange={setElo}
           />
-          <TimeMachine entries={timeline} activeIndex={viewIndex} onSelect={(index) => { setSelected(undefined); setViewIndex(index); }} />
+          <TimeMachine entries={timeline} activeIndex={viewIndex} isGameOver={game.isGameOver()} onSelect={(index) => { setSelected(undefined); setViewIndex(index); }} />
         </div>
       </div>
     </main>
