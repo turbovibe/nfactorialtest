@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { Link, useLocation } from 'wouter';
 import { supabase } from '../lib/supabase';
+import { MovePredictionHook } from '../components/MovePredictionHook';
 
 const benefits = [
   { number: '01', title: 'Play a full game', text: 'Challenge Echo on a complete interactive board with legal moves and instant responses.', detail: 'Real chess, move by move' },
@@ -62,6 +63,8 @@ export function HomePage() {
           </div>
         </div>
       </section>
+
+      <MovePredictionHook />
 
       <section className="benefits" aria-labelledby="benefits-title">
         <div className="benefits__intro">

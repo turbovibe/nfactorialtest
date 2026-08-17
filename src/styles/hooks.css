@@ -1,0 +1,37 @@
+.prediction-hook { display: grid; grid-template-columns: minmax(300px, .82fr) 1.18fr; gap: clamp(38px, 7vw, 100px); align-items: center; padding: 100px 0; border-bottom: 1px solid rgba(255,255,255,.1); }
+.prediction-hook__board { padding: 14px; border: 1px solid var(--line); border-radius: 16px; background: #0d1219; box-shadow: 0 28px 70px rgba(0,0,0,.35); }
+.prediction-hook__board .chessboard { max-width: 470px; margin: auto; }
+.prediction-hook__copy h2 { max-width: 680px; margin: 14px 0 18px; font-size: clamp(36px, 4.5vw, 62px); line-height: 1.03; letter-spacing: -.045em; }
+.prediction-hook__copy > p:not(.eyebrow) { max-width: 620px; color: var(--muted); line-height: 1.7; }
+.prediction-choices { display: flex; gap: 10px; margin: 28px 0 18px; }
+.prediction-choice { min-width: 92px; padding: 13px 18px; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); font: 600 13px 'DM Mono'; transition: border-color .2s ease, transform .2s ease, background .2s ease; }
+.prediction-choice:hover, .prediction-choice--active { border-color: var(--gold); background: rgba(255,163,19,.1); transform: translateY(-2px); }
+.prediction-result { min-height: 145px; padding: 22px; border-left: 3px solid var(--line); border-radius: 0 10px 10px 0; background: rgba(255,255,255,.025); transition: border-color .25s ease, background .25s ease; }
+.prediction-result--visible { border-color: var(--gold); background: rgba(255,163,19,.07); }
+.prediction-result span, .daily-puzzle__case > span, .daily-title > span, .daily-puzzle__toolbar { color: var(--gold); font: 10px 'DM Mono'; letter-spacing: .1em; text-transform: uppercase; }
+.prediction-result h3 { margin: 8px 0; font-size: 23px; }
+.prediction-result p { margin: 0; color: var(--muted); line-height: 1.55; }
+
+.daily-page { width: min(1420px, calc(100% - 64px)); min-height: 100vh; margin: auto; padding-bottom: 60px; }
+.daily-title { display: flex; justify-content: space-between; align-items: end; padding: 42px 0 28px; }
+.daily-title h1 { margin: 8px 0; font-size: clamp(38px, 5vw, 64px); letter-spacing: -.045em; }
+.daily-title p:last-child { margin-bottom: 0; color: var(--muted); }
+.daily-title > span { color: var(--muted); }
+.daily-puzzle { display: grid; grid-template-columns: minmax(420px, 760px) minmax(320px, 1fr); gap: 24px; align-items: start; }
+.daily-puzzle__board, .daily-puzzle__case { border: 1px solid var(--line); border-radius: 14px; background: #0d1219; box-shadow: 0 24px 60px rgba(0,0,0,.28); }
+.daily-puzzle__board { padding: 16px; }
+.daily-puzzle__board .chessboard { max-width: 720px; margin: auto; }
+.daily-puzzle__toolbar { min-height: 42px; display: flex; justify-content: space-between; align-items: center; }
+.daily-puzzle__toolbar button { padding: 7px 10px; border: 0; color: var(--muted); background: transparent; font-size: 11px; text-transform: none; }
+.daily-puzzle__case { position: sticky; top: 16px; padding: 30px; }
+.daily-puzzle__case h2 { margin: 14px 0; font-size: clamp(24px, 2.6vw, 34px); line-height: 1.25; }
+.daily-puzzle__case > p { color: var(--muted); line-height: 1.6; }
+.daily-puzzle__answers { display: grid; grid-template-columns: repeat(3, 1fr); gap: 9px; margin: 26px 0; }
+.daily-answer { padding: 15px 10px; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); font: 600 13px 'DM Mono'; }
+.daily-answer:hover, .daily-answer--selected { border-color: var(--gold); background: rgba(255,163,19,.1); }
+.daily-feedback { padding: 18px; border-left: 3px solid #ef6464; border-radius: 0 8px 8px 0; background: rgba(239,100,100,.08); }
+.daily-feedback--correct { border-color: #78c47f; background: rgba(120,196,127,.09); }
+.daily-feedback p { margin: 7px 0 0; color: var(--muted); font-size: 13px; line-height: 1.55; }
+
+@media (max-width: 980px) { .prediction-hook { grid-template-columns: 1fr; } .prediction-hook__board { width: min(100%, 520px); } .daily-page { width: min(100% - 40px, 760px); } .daily-puzzle { grid-template-columns: 1fr; } .daily-puzzle__case { position: static; } }
+@media (max-width: 560px) { .prediction-hook { padding: 70px 0; } .prediction-choices { display: grid; grid-template-columns: repeat(3, 1fr); } .prediction-choice { min-width: 0; padding-inline: 8px; } .daily-page { width: calc(100% - 24px); } .daily-title { align-items: start; padding-top: 28px; } .daily-title > span { display: none; } .daily-puzzle__board { padding: 8px; } .daily-puzzle__answers { grid-template-columns: 1fr; } }

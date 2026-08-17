@@ -6,6 +6,7 @@ const tabs = [
   { href: '/game', label: 'Play Echo' },
   { href: '/time-machine', label: 'Time Machine' },
   { href: '/detective', label: 'Mistake Detective' },
+  { href: '/mistake-of-the-day', label: 'Daily Mistake' },
 ];
 
 export function ToolNav() {

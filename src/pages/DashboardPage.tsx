@@ -5,6 +5,7 @@ const tools = [
   { href: '/game', number: '01', title: 'Play Echo', text: 'Play a full game against a rival that learns your habits.' },
   { href: '/time-machine', number: '02', title: 'Time Machine', text: 'Learn how to revisit earlier moves and study what changed.' },
   { href: '/detective', number: '03', title: 'Mistake Detective', text: 'Practice spotting stronger moves with clues instead of answers.' },
+  { href: '/mistake-of-the-day', number: '04', title: 'Mistake of the Day', text: 'Solve one quick position and uncover the move that changed everything.' },
 ];
 
 export function DashboardPage() {

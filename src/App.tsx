@@ -8,6 +8,7 @@ import { ProtectedRoute } from './components/ProtectedRoute';
 import { DashboardPage } from './pages/DashboardPage';
 import { TimeMachinePage } from './pages/TimeMachinePage';
 import { DetectivePage } from './pages/DetectivePage';
+import { MistakeOfTheDayPage } from './pages/MistakeOfTheDayPage';
 import { usePointerGlow } from './lib/usePointerGlow';
 
 export default function App() {
@@ -24,6 +25,7 @@ export default function App() {
         <Route path="/game"><ProtectedRoute><GamePage /></ProtectedRoute></Route>
         <Route path="/time-machine"><ProtectedRoute><TimeMachinePage /></ProtectedRoute></Route>
         <Route path="/detective"><ProtectedRoute><DetectivePage /></ProtectedRoute></Route>
+        <Route path="/mistake-of-the-day"><ProtectedRoute><MistakeOfTheDayPage /></ProtectedRoute></Route>
         <Route component={NotFoundPage} />
       </Switch>
     </div>
