@@ -17,7 +17,7 @@
 .daily-title h1 { margin: 8px 0; font-size: clamp(38px, 5vw, 64px); letter-spacing: -.045em; }
 .daily-title p:last-child { margin-bottom: 0; color: var(--muted); }
 .daily-title > span { color: var(--muted); }
-.daily-puzzle { display: grid; grid-template-columns: minmax(420px, 760px) minmax(320px, 1fr); gap: 24px; align-items: start; }
+.daily-puzzle { min-width: 0; display: grid; grid-template-columns: minmax(420px, 760px) minmax(320px, 1fr); gap: 24px; align-items: start; }
 .daily-puzzle__board, .daily-puzzle__case { border: 1px solid var(--line); border-radius: 14px; background: #0d1219; box-shadow: 0 24px 60px rgba(0,0,0,.28); }
 .daily-puzzle__board { padding: 16px; }
 .daily-puzzle__board .chessboard { max-width: 720px; margin: auto; }
@@ -33,5 +33,5 @@
 .daily-feedback--correct { border-color: #78c47f; background: rgba(120,196,127,.09); }
 .daily-feedback p { margin: 7px 0 0; color: var(--muted); font-size: 13px; line-height: 1.55; }
 
-@media (max-width: 980px) { .prediction-hook { grid-template-columns: 1fr; } .prediction-hook__board { width: min(100%, 520px); } .daily-page { width: min(100% - 40px, 760px); } .daily-puzzle { grid-template-columns: 1fr; } .daily-puzzle__case { position: static; } }
-@media (max-width: 560px) { .prediction-hook { padding: 70px 0; } .prediction-choices { display: grid; grid-template-columns: repeat(3, 1fr); } .prediction-choice { min-width: 0; padding-inline: 8px; } .daily-page { width: calc(100% - 24px); } .daily-title { align-items: start; padding-top: 28px; } .daily-title > span { display: none; } .daily-puzzle__board { padding: 8px; } .daily-puzzle__answers { grid-template-columns: 1fr; } }
+@media (max-width: 980px) { .prediction-hook { grid-template-columns: minmax(0, 1fr); } .prediction-hook__board { width: min(100%, 520px); } .daily-page { width: min(100% - 40px, 760px); } .daily-puzzle { grid-template-columns: minmax(0, 1fr); } .daily-puzzle__case { position: static; } }
+@media (max-width: 560px) { .prediction-hook { gap: 28px; padding: 62px 0; } .prediction-hook__copy { order: -1; } .prediction-hook__copy h2 { font-size: clamp(32px, 10vw, 44px); } .prediction-hook__board { padding: 8px; border-radius: 12px; } .prediction-choices { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 7px; margin-top: 22px; } .prediction-choice { min-width: 0; min-height: 48px; padding-inline: 6px; } .prediction-result { min-height: 0; padding: 18px; } .daily-page { width: calc(100% - 24px); padding-bottom: 36px; } .daily-title { align-items: start; padding: 28px 0 20px; } .daily-title h1 { font-size: clamp(34px, 11vw, 44px); line-height: 1.02; } .daily-title > span { display: none; } .daily-puzzle { gap: 14px; } .daily-puzzle__board { min-width: 0; padding: 7px; } .daily-puzzle__case { min-width: 0; padding: 22px 18px; } .daily-puzzle__answers { grid-template-columns: 1fr; gap: 8px; margin: 22px 0; } .daily-answer { min-height: 48px; } .daily-feedback { padding: 16px; } }

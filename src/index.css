@@ -34,7 +34,7 @@ button { cursor: pointer; }
 button { color: inherit; }
 a { color: inherit; text-decoration: none; }
 
-.app-shell { --pointer-x: 50vw; --pointer-y: 45vh; --tilt-x: 0deg; --tilt-y: 0deg; min-height: 100vh; }
+.app-shell { --pointer-x: 50vw; --pointer-y: 45vh; --tilt-x: 0deg; --tilt-y: 0deg; min-height: 100vh; overflow-x: clip; }
 button:not(.square):not(.timeline__step), a[href]:not(.brand) { outline: 1px solid rgba(255,255,255,.11); outline-offset: 2px; }
 .interactive-glow { --button-x: 50%; --button-y: 50%; --glow-strength: 0; position: relative; isolation: isolate; }
 .interactive-glow::before {

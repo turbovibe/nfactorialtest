@@ -3,7 +3,7 @@
 .dashboard-page { position: relative; isolation: isolate; overflow: hidden; }
 .dashboard-page::before { content: ''; position: absolute; z-index: -1; inset: 0; pointer-events: none; background: radial-gradient(560px circle at var(--pointer-x) var(--pointer-y), rgba(255,163,19,.13), transparent 68%); }
 .tool-nav { min-height: 74px; display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 34px; border-bottom: 1px solid var(--line); }
-.tool-tabs { height: 74px; display: flex; justify-content: center; gap: 4px; }
+.tool-tabs { min-width: 0; height: 74px; display: flex; justify-content: center; gap: 4px; }
 .tool-tab { display: grid; place-items: center; padding: 0 16px; border-bottom: 3px solid transparent; color: var(--muted); font-size: 13px; font-weight: 600; transition: color .2s ease, border-color .2s ease; }
 .tool-tab:hover, .tool-tab--active { color: var(--ink); border-bottom-color: var(--gold); }
 .sign-out, .game-toolbar button { padding: 10px 14px; border: 1px solid var(--line); border-radius: 8px; color: var(--muted); background: rgba(255,255,255,.025); transition: color .2s ease, border-color .2s ease; }
@@ -34,4 +34,5 @@
 .answer-feedback--correct { color: #dce9cc; border-color: #92b96b; background: rgba(108,154,72,.1); }
 .game-page .tool-nav { margin-bottom: 0; }
 .game-toolbar { display: flex; justify-content: flex-end; align-items: center; gap: 18px; min-height: 54px; color: var(--muted); font: 11px 'DM Mono'; }
-@media (max-width: 800px) { .tools-page { padding: 0 20px 50px; } .tool-nav { grid-template-columns: 1fr auto; gap: 10px; padding-top: 15px; } .tool-tabs { grid-column: 1 / -1; grid-row: 2; height: auto; justify-content: flex-start; overflow-x: auto; } .tool-tab { flex: 0 0 auto; padding: 14px 12px; } .tool-grid { grid-template-columns: 1fr; } .tool-card { min-height: 0; } .lesson-timeline { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 800px) { .tools-page { padding: 0 20px 50px; } .tool-nav { grid-template-columns: minmax(0, 1fr) auto; gap: 10px; padding-top: 15px; } .tool-tabs { width: 100%; grid-column: 1 / -1; grid-row: 2; height: auto; justify-content: flex-start; overflow-x: auto; overscroll-behavior-x: contain; scrollbar-width: none; scroll-snap-type: x proximity; } .tool-tabs::-webkit-scrollbar { display: none; } .tool-tab { flex: 0 0 auto; min-height: 46px; padding: 13px 12px; scroll-snap-align: start; } .tool-grid { grid-template-columns: 1fr; } .tool-card { min-height: 0; } .lesson-timeline { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 420px) { .tool-nav .brand { overflow: hidden; font-size: 12px; text-overflow: ellipsis; white-space: nowrap; } .sign-out { padding: 9px 10px; font-size: 12px; } .tool-tab { padding-inline: 10px; font-size: 12px; } .dashboard-hero { padding: 55px 0 38px; } .dashboard-hero h1, .tool-workspace > h1 { font-size: 40px; } }
