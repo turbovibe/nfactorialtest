@@ -6,6 +6,7 @@ import { ReviewMoveList } from '../components/ReviewMoveList';
 import { ReviewSummary } from '../components/ReviewSummary';
 import { ToolNav } from '../components/ToolNav';
 import { loadLatestGame } from '../lib/gameTimeline';
+import { findMoveSquares } from '../lib/moveSquares';
 import { useGameReview } from '../lib/useGameReview';
 
 export function TimeMachinePage() {
@@ -14,6 +15,7 @@ export function TimeMachinePage() {
   const [activeIndex, setActiveIndex] = useState(Math.max(0, entries.length - 1));
   const { reviewedEntries, status, progress, depth } = useGameReview(entries, entries.length > 1);
   const activeEntry = reviewedEntries[activeIndex];
+  const lastMove = useMemo(() => findMoveSquares(entries, activeIndex), [activeIndex, entries]);
 
   function changeMove(nextIndex: number) {
     setActiveIndex(Math.max(0, Math.min(reviewedEntries.length - 1, nextIndex)));
@@ -41,7 +43,11 @@ export function TimeMachinePage() {
               <strong>{activeIndex === 0 ? 'Start' : `${Math.ceil(activeIndex / 2)}${activeIndex % 2 ? '.' : '…'} ${activeEntry?.move}`}</strong>
               <button disabled={activeIndex === reviewedEntries.length - 1} onClick={() => changeMove(activeIndex + 1)} type="button">Next →</button>
             </div>
-            <ChessBoard fen={activeEntry?.fen ?? reviewedEntries[0].fen} playerColor={game?.playerColor ?? 'w'} />
+            <ChessBoard
+              fen={activeEntry?.fen ?? reviewedEntries[0].fen}
+              lastMove={lastMove}
+              playerColor={game?.playerColor ?? 'w'}
+            />
             <ReviewInsight entry={activeEntry} index={activeIndex} depth={depth} />
           </section>
 

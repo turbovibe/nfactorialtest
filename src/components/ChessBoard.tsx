@@ -1,11 +1,15 @@
 import { useRef, useState, type PointerEvent } from 'react';
 import { Chess, type Color, type Square } from 'chess.js';
+import type { MoveSquares } from '../lib/moveSquares';
+import { useBoardAnnotations } from '../lib/useBoardAnnotations';
+import { BoardAnnotations } from './BoardAnnotations';
 
 type ChessBoardProps = {
   fen: string;
   selected?: Square;
   targets?: Square[];
   interactive?: boolean;
+  lastMove?: MoveSquares;
   playerColor: Color;
   onSquareClick?: (square: Square) => void;
   onMove?: (from: Square, to: Square) => void;
@@ -30,8 +34,9 @@ type PieceDrag = {
   angle: number;
 };
 
-export function ChessBoard({ fen, selected, targets = [], interactive, playerColor, onSquareClick, onMove }: ChessBoardProps) {
+export function ChessBoard({ fen, selected, targets = [], interactive, lastMove, playerColor, onSquareClick, onMove }: ChessBoardProps) {
   const [drag, setDrag] = useState<PieceDrag>();
+  const annotations = useBoardAnnotations(fen);
   const lastPointer = useRef({ x: 0, y: 0 });
   const hasMoved = useRef(false);
   const game = new Chess(fen);
@@ -90,13 +95,22 @@ export function ChessBoard({ fen, selected, targets = [], interactive, playerCol
         const piece = game.get(square);
         const isLight = (index + Math.floor(index / 8)) % 2 === 0;
         const isTarget = targets.includes(square);
+        const lastMoveClass = square === lastMove?.from
+          ? ' square--last-from'
+          : square === lastMove?.to ? ' square--last-to' : '';
+        const annotationClass = annotations.markedSquares.has(square) ? ' square--annotated' : '';
         return (
           <button
-            className={`square ${isLight ? 'square--light' : 'square--dark'} ${selected === square ? 'square--selected' : ''}`}
-            disabled={!interactive}
+            className={`square ${isLight ? 'square--light' : 'square--dark'}${lastMoveClass}${annotationClass} ${selected === square ? 'square--selected' : ''}`}
+            aria-disabled={!interactive}
             data-square={square}
             key={square}
+            tabIndex={interactive ? 0 : -1}
             onClick={() => onSquareClick?.(square)}
+            onContextMenu={annotations.preventMenu}
+            onPointerDown={(event) => annotations.startArrow(event, square)}
+            onPointerMove={annotations.moveArrow}
+            onPointerUp={annotations.finishArrow}
             aria-label={`${square}${piece ? ` ${piece.color}${piece.type}` : ''}`}
           >
             {piece && (
@@ -117,6 +131,7 @@ export function ChessBoard({ fen, selected, targets = [], interactive, playerCol
           </button>
         );
       })}
+      <BoardAnnotations arrows={annotations.arrows} orientation={playerColor} />
       {drag && (
         <span
           className={`dragged-piece piece--${drag.color}`}

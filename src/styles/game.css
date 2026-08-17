@@ -32,12 +32,18 @@
 .player-row b { font-size: 14px; }
 .player-row small { color: var(--muted); font: 10px 'DM Mono'; }
 
-.chessboard { box-sizing: border-box; width: 100%; aspect-ratio: 1; display: grid; grid-template: repeat(8, minmax(0, 1fr)) / repeat(8, minmax(0, 1fr)); overflow: hidden; border: 10px solid #111823; border-radius: 6px; box-shadow: 0 28px 65px rgba(0,0,0,.42), 0 0 0 1px #303a48; }
+.chessboard { position: relative; box-sizing: border-box; width: 100%; aspect-ratio: 1; display: grid; grid-template: repeat(8, minmax(0, 1fr)) / repeat(8, minmax(0, 1fr)); overflow: hidden; border: 10px solid #111823; border-radius: 6px; box-shadow: 0 28px 65px rgba(0,0,0,.42), 0 0 0 1px #303a48; }
 .square { position: relative; display: grid; place-items: center; width: 100%; min-width: 0; min-height: 0; padding: 0; overflow: hidden; border: 0; border-radius: 0; }
-.square:disabled { cursor: default; }
+.square[aria-disabled='true'] { cursor: default; }
 .square--light { background: var(--gray); }
 .square--dark { background: var(--navy); }
 .square--selected { box-shadow: inset 0 0 0 5px var(--lime); }
+.square--last-from { box-shadow: inset 0 0 0 999px rgba(73, 151, 196, .32), inset 0 -4px 0 #6fc7ee; }
+.square--last-to { box-shadow: inset 0 0 0 999px rgba(73, 151, 196, .48), inset 0 -5px 0 #8cdbff; }
+.square--annotated::after { position: absolute; z-index: 1; inset: 0; background: rgba(226, 65, 65, .68); content: ''; pointer-events: none; }
+.board-annotations { position: absolute; z-index: 5; inset: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; }
+.board-arrow { fill: none; stroke: rgba(241, 166, 20, .82); stroke-linecap: round; stroke-linejoin: round; stroke-width: 24px; }
+.board-annotations marker path { fill: rgba(241, 166, 20, .9); }
 .piece { z-index: 2; display: grid; place-items: center; width: 100%; height: 100%; font-family: 'Times New Roman', Georgia, serif; font-size: clamp(34px, 5.5vw, 68px); font-weight: 700; line-height: 1; transform: translateY(-2%); user-select: none; }
 .piece--interactive { cursor: grab; touch-action: none; }
 .piece--interactive:active { cursor: grabbing; }
