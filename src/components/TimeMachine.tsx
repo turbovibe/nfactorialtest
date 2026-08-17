@@ -1,21 +1,24 @@
 import { ratingLabels, type MoveRating } from '../lib/moveRating';
+import type { ReviewStatus } from '../lib/useGameReview';
+import type { TimelineEntry } from '../lib/gameTimeline';
 
-export type TimelineEntry = {
-  fen: string;
-  move: string;
-  rating?: MoveRating;
-};
+export type { TimelineEntry } from '../lib/gameTimeline';
 
 type TimeMachineProps = {
   entries: TimelineEntry[];
   activeIndex: number;
   isGameOver: boolean;
+  reviewStatus: ReviewStatus;
+  reviewProgress: number;
+  reviewDepth: number;
   onSelect: (index: number) => void;
 };
 
-const legendRatings: MoveRating[] = ['blunder', 'inaccuracy', 'book', 'fine', 'good', 'brilliant'];
+const legendRatings: MoveRating[] = ['blunder', 'inaccuracy', 'fine', 'good', 'brilliant'];
 
-export function TimeMachine({ entries, activeIndex, isGameOver, onSelect }: TimeMachineProps) {
+export function TimeMachine({
+  entries, activeIndex, isGameOver, reviewStatus, reviewProgress, reviewDepth, onSelect,
+}: TimeMachineProps) {
   return (
     <section className="time-machine">
       <div className="time-machine__heading">
@@ -24,6 +27,12 @@ export function TimeMachine({ entries, activeIndex, isGameOver, onSelect }: Time
       </div>
       {!isGameOver ? (
         <p className="timeline-locked">Finish the game to reveal every move rating.</p>
+      ) : reviewStatus === 'analyzing' || reviewStatus === 'idle' ? (
+        <p className="timeline-locked">
+          Stockfish is analyzing position {reviewProgress}/{entries.length} at depth {reviewDepth}…
+        </p>
+      ) : reviewStatus === 'error' ? (
+        <p className="timeline-locked">Stockfish could not finish this review. Start a new game and try again.</p>
       ) : (
         <>
           <div className="timeline">

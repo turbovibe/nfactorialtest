@@ -1,31 +1,64 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
+import { Link } from 'wouter';
+import { ChessBoard } from '../components/ChessBoard';
+import { ReviewInsight } from '../components/ReviewInsight';
+import { ReviewMoveList } from '../components/ReviewMoveList';
+import { ReviewSummary } from '../components/ReviewSummary';
 import { ToolNav } from '../components/ToolNav';
-
-const moments = [
-  { move: 'Start', note: 'Every game begins with the same position and many possible plans.' },
-  { move: '1. e4', note: 'White controls the centre and opens lines for the queen and bishop.' },
-  { move: '…e5', note: 'Black answers in the centre and keeps the position balanced.' },
-  { move: '2. Nf3', note: 'The knight develops while attacking the e5 pawn.' },
-];
+import { loadLatestGame } from '../lib/gameTimeline';
+import { useGameReview } from '../lib/useGameReview';
 
 export function TimeMachinePage() {
-  const [active, setActive] = useState(0);
+  const game = useMemo(loadLatestGame, []);
+  const entries = useMemo(() => game?.entries ?? [], [game]);
+  const [activeIndex, setActiveIndex] = useState(Math.max(0, entries.length - 1));
+  const { reviewedEntries, status, progress, depth } = useGameReview(entries, entries.length > 1);
+  const activeEntry = reviewedEntries[activeIndex];
+
+  function changeMove(nextIndex: number) {
+    setActiveIndex(Math.max(0, Math.min(reviewedEntries.length - 1, nextIndex)));
+  }
 
   return (
-    <main className="tools-page">
+    <main className="review-page">
       <ToolNav />
-      <section className="tool-workspace">
-        <p className="eyebrow">Tool 02</p><h1>Time Machine</h1>
-        <p className="workspace-lead">Select a moment to understand how the position changed.</p>
-        <div className="lesson-timeline">
-          {moments.map((moment, index) => (
-            <button className={active === index ? 'lesson-step lesson-step--active' : 'lesson-step'} onClick={() => setActive(index)} key={moment.move}>
-              <span>{String(index).padStart(2, '0')}</span>{moment.move}
-            </button>
-          ))}
+      <header className="review-title">
+        <div><p className="eyebrow">Stockfish 18 review</p><h1>Time Machine</h1></div>
+        {reviewedEntries.length > 1 && <span>{reviewedEntries.length - 1} moves</span>}
+      </header>
+
+      {reviewedEntries.length <= 1 ? (
+        <section className="review-empty">
+          <span>⌛</span><h2>No game to rewind yet</h2>
+          <p>Play a few moves against Echo, then come back here for a full review.</p>
+          <Link href="/game">Play a game</Link>
+        </section>
+      ) : (
+        <div className="review-layout">
+          <section className="review-board-panel">
+            <div className="review-board-toolbar">
+              <button disabled={activeIndex === 0} onClick={() => changeMove(activeIndex - 1)} type="button">← Previous</button>
+              <strong>{activeIndex === 0 ? 'Start' : `${Math.ceil(activeIndex / 2)}${activeIndex % 2 ? '.' : '…'} ${activeEntry?.move}`}</strong>
+              <button disabled={activeIndex === reviewedEntries.length - 1} onClick={() => changeMove(activeIndex + 1)} type="button">Next →</button>
+            </div>
+            <ChessBoard fen={activeEntry?.fen ?? reviewedEntries[0].fen} playerColor={game?.playerColor ?? 'w'} />
+            <ReviewInsight entry={activeEntry} index={activeIndex} depth={depth} />
+          </section>
+
+          <aside className="review-sidebar">
+            <div className="review-sidebar__title"><div><span>Game review</span><h2>Move timeline</h2></div><b>SF 18</b></div>
+            {(status === 'analyzing' || status === 'idle') && (
+              <div className="review-loading">
+                <span style={{ width: `${(progress / reviewedEntries.length) * 100}%` }} />
+                <p>Analyzing position {progress} of {reviewedEntries.length} · depth {depth}</p>
+              </div>
+            )}
+            {status === 'error' && <p className="review-error">Stockfish could not finish this review. Refresh to try again.</p>}
+            <ReviewMoveList entries={reviewedEntries} activeIndex={activeIndex} onSelect={changeMove} />
+            {status === 'ready' && <ReviewSummary entries={reviewedEntries} />}
+          </aside>
         </div>
-        <article className="lesson-result"><span>Selected moment</span><h2>{moments[active].move}</h2><p>{moments[active].note}</p></article>
-      </section>
+      )}
     </main>
   );
 }

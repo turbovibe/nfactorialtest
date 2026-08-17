@@ -3,6 +3,7 @@
 @import './styles/game.css';
 @import './styles/auth.css';
 @import './styles/tools.css';
+@import './styles/review.css';
 
 :root {
   --black: #050609;

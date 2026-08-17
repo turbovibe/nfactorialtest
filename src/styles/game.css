@@ -3,12 +3,29 @@
 .game-nav button { border: 1px solid var(--line); padding: 9px 13px; background: transparent; color: var(--ink); }
 .game-toolbar { display: flex; align-items: center; gap: 12px; }
 .game-toolbar > span { margin-right: auto; }
+.game-toolbar__actions { display: flex; gap: 8px; }
+.game-toolbar__actions button { padding: 8px 12px; border: 1px solid var(--line); background: transparent; color: var(--ink); }
+.game-toolbar__actions button:hover:not(:disabled) { border-color: rgba(255,163,19,.5); }
+.game-toolbar__actions button:disabled { cursor: default; opacity: .42; }
+.game-toolbar__actions .game-toolbar__resign { color: #ef8a8a; }
 .color-selector { display: flex; align-items: center; gap: 4px; color: var(--muted); font: 10px 'DM Mono'; text-transform: uppercase; }
 .color-selector button { padding: 7px 10px; border: 1px solid var(--line); background: transparent; color: var(--muted); }
 .color-selector button:hover { border-color: rgba(255,163,19,.5); color: var(--ink); }
 .color-selector .color-selector__active { border-color: var(--gold); background: rgba(255,163,19,.12); color: #ffc15a; }
 .game-layout { display: grid; grid-template-columns: minmax(400px, 680px) minmax(300px, 1fr); gap: clamp(30px, 6vw, 90px); padding-top: 34px; }
 .board-area { width: 100%; }
+.board-stage { position: relative; }
+.board-stage .chessboard { transition: filter .28s ease, opacity .28s ease; }
+.board-stage--ended .chessboard { filter: blur(3px) brightness(.48); opacity: .78; }
+.game-end-overlay { position: absolute; z-index: 10; inset: 0; display: grid; place-items: center; padding: 24px; animation: end-overlay-in .28s ease both; }
+.game-end-card { width: min(330px, 82%); padding: 28px; border: 1px solid rgba(255,163,19,.42); border-radius: 16px; background: rgba(13,19,28,.94); box-shadow: 0 24px 70px rgba(0,0,0,.55); text-align: center; }
+.game-end-card > span { color: var(--gold); font: 10px 'DM Mono'; letter-spacing: .12em; text-transform: uppercase; }
+.game-end-card h2 { margin: 8px 0; font-size: clamp(26px, 5vw, 42px); }
+.game-end-card p { margin: 0 auto 22px; color: var(--muted); font-size: 13px; line-height: 1.6; }
+.game-end-card > div { display: flex; justify-content: center; gap: 10px; }
+.game-end-card button { padding: 10px 16px; border: 1px solid var(--line); border-radius: 6px; background: transparent; color: var(--ink); }
+.game-end-card .game-end-card__review { border-color: var(--gold); background: var(--gold); color: #15100a; font-weight: 700; }
+@keyframes end-overlay-in { from { opacity: 0; transform: translateY(8px) scale(.98); } to { opacity: 1; transform: none; } }
 .player-row { min-height: 54px; display: flex; align-items: center; gap: 12px; }
 .player-avatar { width: 34px; height: 34px; display: grid; place-items: center; border: 1px solid rgba(255,163,19,.35); border-radius: 50%; background: rgba(255,163,19,.1); color: #ffc15a; font-size: 13px; }
 .player-row div { display: flex; flex-direction: column; }
@@ -81,7 +98,6 @@
 .timeline__step:hover i { transform: scale(1.2); }
 .timeline__step--blunder { --rating: #ef5b5b; }
 .timeline__step--inaccuracy { --rating: #f1c84b; }
-.timeline__step--book { --rating: #9a704f; }
 .timeline__step--fine { --rating: #579b65; }
 .timeline__step--good { --rating: #7acb78; }
 .timeline__step--brilliant { --rating: #72cce5; }
@@ -94,7 +110,6 @@
 .rating-legend i { width: 8px; height: 8px; border-radius: 50%; background: #596273; }
 .rating-legend__blunder i { background: #ef5b5b; }
 .rating-legend__inaccuracy i { background: #f1c84b; }
-.rating-legend__book i { background: #9a704f; }
 .rating-legend__fine i { background: #579b65; }
 .rating-legend__good i { background: #7acb78; }
 .rating-legend__brilliant i { background: #72cce5; }

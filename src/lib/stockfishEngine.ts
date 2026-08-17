@@ -3,11 +3,19 @@ const stockfishScriptUrl = '/stockfish/stockfish-18-lite-single.js';
 export type EngineStatus = 'idle' | 'loading' | 'ready' | 'fallback';
 
 type PendingSearch = {
-  resolve: (move: string | null) => void;
+  resolve: (result: EngineAnalysis) => void;
   timeout: number;
+  scoreCp?: number;
+  depth: number;
 };
 
-class StockfishEngine {
+export type EngineAnalysis = {
+  bestMove: string | null;
+  scoreCp: number | null;
+  depth: number;
+};
+
+export class StockfishEngine {
   private readonly worker: Worker;
   private readonly ready: Promise<void>;
   private pendingSearch?: PendingSearch;
@@ -40,40 +48,62 @@ class StockfishEngine {
       retry = window.setInterval(() => this.worker.postMessage('uci'), 750);
     });
     this.worker.addEventListener('message', (event: MessageEvent<string>) => {
+      const score = event.data.match(/\bdepth (\d+).*\bscore (cp|mate) (-?\d+)/);
+      if (score && this.pendingSearch) {
+        const depth = Number(score[1]);
+        if (depth >= this.pendingSearch.depth) {
+          const value = Number(score[3]);
+          this.pendingSearch.depth = depth;
+          this.pendingSearch.scoreCp = score[2] === 'mate'
+            ? Math.sign(value) * (100_000 - Math.abs(value))
+            : value;
+        }
+      }
       if (!event.data.startsWith('bestmove ') || !this.pendingSearch) return;
       const move = event.data.split(' ')[1];
       window.clearTimeout(this.pendingSearch.timeout);
-      this.pendingSearch.resolve(move === '(none)' ? null : move);
+      this.pendingSearch.resolve({
+        bestMove: move === '(none)' ? null : move,
+        scoreCp: this.pendingSearch.scoreCp ?? null,
+        depth: this.pendingSearch.depth,
+      });
       this.pendingSearch = undefined;
     });
     this.worker.addEventListener('error', () => {
       if (!this.pendingSearch) return;
       window.clearTimeout(this.pendingSearch.timeout);
-      this.pendingSearch.resolve(null);
+      this.pendingSearch.resolve({ bestMove: null, scoreCp: null, depth: 0 });
       this.pendingSearch = undefined;
     });
   }
 
   async findMove(fen: string, elo: number): Promise<string | null> {
     await this.ready;
+    const engineElo = Math.max(1320, Math.min(3190, elo));
+    const maximumStrength = elo >= 3200;
+    this.worker.postMessage(`setoption name UCI_LimitStrength value ${maximumStrength ? 'false' : 'true'}`);
+    this.worker.postMessage(maximumStrength
+      ? 'setoption name Skill Level value 20'
+      : `setoption name UCI_Elo value ${engineElo}`);
+    const thinkTime = Math.round(300 + (Math.min(elo, 3200) / 3200) * 900);
+    const result = await this.search(fen, `go movetime ${thinkTime}`, 5_000);
+    return result.bestMove;
+  }
+
+  async analyze(fen: string, depth: number): Promise<EngineAnalysis> {
+    await this.ready;
+    this.worker.postMessage('setoption name UCI_LimitStrength value false');
+    return this.search(fen, `go depth ${depth}`, 12_000);
+  }
+
+  private search(fen: string, command: string, timeoutMs: number): Promise<EngineAnalysis> {
     return new Promise((resolve) => {
       const timeout = window.setTimeout(() => {
         this.worker.postMessage('stop');
-        this.pendingSearch = undefined;
-        resolve(null);
-      }, 5_000);
-      this.pendingSearch = { resolve, timeout };
-      const engineElo = Math.max(1320, Math.min(3190, elo));
-      const maximumStrength = elo >= 3200;
-      this.worker.postMessage(`setoption name UCI_LimitStrength value ${maximumStrength ? 'false' : 'true'}`);
-      if (maximumStrength) {
-        this.worker.postMessage('setoption name Skill Level value 20');
-      } else {
-        this.worker.postMessage(`setoption name UCI_Elo value ${engineElo}`);
-      }
+      }, timeoutMs);
+      this.pendingSearch = { resolve, timeout, depth: 0 };
       this.worker.postMessage(`position fen ${fen}`);
-      const thinkTime = Math.round(300 + (Math.min(elo, 3200) / 3200) * 900);
-      this.worker.postMessage(`go movetime ${thinkTime}`);
+      this.worker.postMessage(command);
     });
   }
 

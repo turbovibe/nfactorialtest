@@ -1,10 +1,12 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Chess, type Color, type Square } from 'chess.js';
+import { useLocation } from 'wouter';
 import { ToolNav } from '../components/ToolNav';
-import { ChessBoard } from '../components/ChessBoard';
-import { ColorSelector } from '../components/ColorSelector';
+import { GameBoardArea } from '../components/GameBoardArea';
+import { GameToolbar } from '../components/GameToolbar';
 import { RivalPanel } from '../components/RivalPanel';
-import { TimeMachine, type TimelineEntry } from '../components/TimeMachine';
+import { TimeMachine } from '../components/TimeMachine';
+import { saveLatestGame, type TimelineEntry } from '../lib/gameTimeline';
 import {
   emptyProfile,
   updateProfile,
@@ -12,20 +14,13 @@ import {
 } from '../lib/chessRival';
 import { useRivalTurn } from '../lib/useRivalTurn';
 import { useMoveCommentary } from '../lib/useMoveCommentary';
-import { rateMove } from '../lib/moveRating';
+import { useGameReview } from '../lib/useGameReview';
+import { useGameEndOverlay } from '../lib/useGameEndOverlay';
 
 const initialGame = new Chess();
 const initialTimeline: TimelineEntry[] = [{
   fen: initialGame.fen(), move: 'Start',
 }];
-
-function gameMessage(game: Chess, isThinking: boolean, playerColor: Color): string {
-  if (game.isCheckmate()) return game.turn() === playerColor ? 'Echo wins — rewind and investigate.' : 'You checkmated Echo!';
-  if (game.isDraw()) return 'Draw. A perfectly balanced mystery.';
-  if (game.inCheck()) return game.turn() === playerColor ? 'Your king is in check.' : 'Echo is in check.';
-  if (isThinking) return 'Echo is adapting…';
-  return game.turn() === playerColor ? 'Your move' : 'Echo’s move';
-}
 
 export function GamePage() {
   const [fen, setFen] = useState(initialGame.fen());
@@ -35,13 +30,24 @@ export function GamePage() {
   const [viewIndex, setViewIndex] = useState(0);
   const [elo, setElo] = useState(1200);
   const [playerColor, setPlayerColor] = useState<Color>('w');
+  const [resigned, setResigned] = useState(false);
+  const [, navigate] = useLocation();
   const { commentary, isCommenting, commentOnMove, resetCommentary } = useMoveCommentary();
   const game = useMemo(() => new Chess(fen), [fen]);
+  const isGameOver = resigned || game.isGameOver();
+  const { isOpen: showEndOverlay, closeOverlay } = useGameEndOverlay(isGameOver);
   const { isThinking, engineStatus, resetEngineStatus } = useRivalTurn({
-    game, profile, elo, playerColor, setFen, setTimeline, setViewIndex,
+    game, profile, elo, playerColor, stopped: resigned, setFen, setTimeline, setViewIndex,
   });
+  const { reviewedEntries, status: reviewStatus, progress: reviewProgress, depth: reviewDepth } = useGameReview(
+    timeline, isGameOver,
+  );
   const isPresent = viewIndex === timeline.length - 1;
   const viewedFen = timeline[viewIndex]?.fen ?? fen;
+
+  useEffect(() => {
+    saveLatestGame({ entries: timeline, playerColor });
+  }, [playerColor, timeline]);
 
   const targets = useMemo(() => {
     if (!selected || !isPresent) return [];
@@ -49,7 +55,7 @@ export function GamePage() {
   }, [game, isPresent, selected]);
 
   function playFrom(square: Square) {
-    if (!isPresent || isThinking || game.turn() !== playerColor || game.isGameOver()) return;
+    if (!isPresent || isThinking || isGameOver || game.turn() !== playerColor) return;
     const piece = game.get(square);
     if (!selected) {
       if (piece?.color === playerColor) setSelected(square);
@@ -60,7 +66,7 @@ export function GamePage() {
   }
 
   function playMove(from: Square, to: Square) {
-    if (!isPresent || isThinking || game.turn() !== playerColor || game.isGameOver()) return;
+    if (!isPresent || isThinking || isGameOver || game.turn() !== playerColor) return;
     const before = new Chess(game.fen());
     const legalMove = before.moves({ square: from, verbose: true })
       .find((move) => move.to === to && (!move.promotion || move.promotion === 'q'));
@@ -74,7 +80,7 @@ export function GamePage() {
     const played = next.move(legalMove.san);
     void commentOnMove(before, played, next);
     const entry: TimelineEntry = {
-      fen: next.fen(), move: played.san, rating: rateMove(played, next, timeline.length),
+      fen: next.fen(), move: played.san,
     };
     setProfile((currentProfile) => updateProfile(currentProfile, played));
     setFen(next.fen());
@@ -90,6 +96,8 @@ export function GamePage() {
     setFen(fresh.fen());
     setSelected(undefined);
     setProfile(emptyProfile);
+    setResigned(false);
+    closeOverlay();
     setTimeline([{ fen: fresh.fen(), move: 'Start' }]);
     setViewIndex(0);
     resetEngineStatus();
@@ -102,28 +110,39 @@ export function GamePage() {
     resetGame();
   }
 
+  function resignGame() {
+    if (isGameOver) return;
+    setSelected(undefined);
+    setResigned(true);
+  }
+
   return (
     <main className="game-page">
       <ToolNav />
-      <div className="game-toolbar">
-        <span>Game 01 · You play {playerColor === 'w' ? 'white' : 'black'}</span>
-        <ColorSelector value={playerColor} onChange={chooseColor} />
-        <button onClick={resetGame}>New game</button>
-      </div>
+      <GameToolbar
+        playerColor={playerColor}
+        canResign={!isGameOver}
+        onColorChange={chooseColor}
+        onResign={resignGame}
+        onNewGame={resetGame}
+      />
 
       <div className="game-layout">
-        <section className="board-area">
-          <div className="player-row"><span className="player-avatar">Y</span><div><b>You</b><small>{gameMessage(game, isThinking, playerColor)}</small></div></div>
-          <ChessBoard
-            fen={viewedFen}
-            selected={selected}
-            targets={targets}
-            interactive={isPresent && !isThinking}
-            playerColor={playerColor}
-            onSquareClick={playFrom}
-            onMove={playMove}
-          />
-        </section>
+        <GameBoardArea
+          game={game}
+          fen={viewedFen}
+          selected={selected}
+          targets={targets}
+          playerColor={playerColor}
+          isThinking={isThinking}
+          isGameOver={isGameOver || !isPresent}
+          resigned={resigned}
+          showEndOverlay={showEndOverlay}
+          onSquareClick={playFrom}
+          onMove={playMove}
+          onNewGame={resetGame}
+          onReview={() => navigate('/time-machine')}
+        />
         <div className="game-sidebar">
           <RivalPanel
             profile={profile}
@@ -134,7 +153,15 @@ export function GamePage() {
             engineStatus={engineStatus}
             onEloChange={setElo}
           />
-          <TimeMachine entries={timeline} activeIndex={viewIndex} isGameOver={game.isGameOver()} onSelect={(index) => { setSelected(undefined); setViewIndex(index); }} />
+          <TimeMachine
+            entries={reviewedEntries}
+            activeIndex={viewIndex}
+            isGameOver={isGameOver}
+            reviewStatus={reviewStatus}
+            reviewProgress={reviewProgress}
+            reviewDepth={reviewDepth}
+            onSelect={(index) => { setSelected(undefined); setViewIndex(index); }}
+          />
         </div>
       </div>
     </main>

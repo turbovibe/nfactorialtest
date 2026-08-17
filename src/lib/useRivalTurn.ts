@@ -1,22 +1,22 @@
 import { useEffect, useRef, useState, type Dispatch, type SetStateAction } from 'react';
 import { Chess, type Color } from 'chess.js';
-import type { TimelineEntry } from '../components/TimeMachine';
+import type { TimelineEntry } from './gameTimeline';
 import { chooseRivalMove, type PlayerProfile } from './chessRival';
 import { findStockfishMove, type EngineStatus } from './stockfishEngine';
-import { rateMove } from './moveRating';
 
 type RivalTurnOptions = {
   game: Chess;
   profile: PlayerProfile;
   elo: number;
   playerColor: Color;
+  stopped: boolean;
   setFen: Dispatch<SetStateAction<string>>;
   setTimeline: Dispatch<SetStateAction<TimelineEntry[]>>;
   setViewIndex: Dispatch<SetStateAction<number>>;
 };
 
 export function useRivalTurn(options: RivalTurnOptions) {
-  const { game, profile, elo, playerColor, setFen, setTimeline, setViewIndex } = options;
+  const { game, profile, elo, playerColor, stopped, setFen, setTimeline, setViewIndex } = options;
   const eloRef = useRef(elo);
   const [isThinking, setIsThinking] = useState(false);
   const [engineStatus, setEngineStatus] = useState<EngineStatus>('idle');
@@ -26,7 +26,10 @@ export function useRivalTurn(options: RivalTurnOptions) {
   }, [elo]);
 
   useEffect(() => {
-    if (game.turn() === playerColor || game.isGameOver()) return;
+    if (stopped || game.turn() === playerColor || game.isGameOver()) {
+      setIsThinking(false);
+      return;
+    }
     let cancelled = false;
     setIsThinking(true);
     const timer = window.setTimeout(async () => {
@@ -49,7 +52,6 @@ export function useRivalTurn(options: RivalTurnOptions) {
         setTimeline((current) => {
           const entry: TimelineEntry = {
             fen: next.fen(), move: `…${played.san}`,
-            rating: rateMove(played, next, current.length),
           };
           const updated = [...current, entry];
           setViewIndex(updated.length - 1);
@@ -62,7 +64,7 @@ export function useRivalTurn(options: RivalTurnOptions) {
       cancelled = true;
       window.clearTimeout(timer);
     };
-  }, [game, playerColor, profile, setFen, setTimeline, setViewIndex]);
+  }, [game, playerColor, profile, setFen, setTimeline, setViewIndex, stopped]);
 
   return {
     isThinking,
