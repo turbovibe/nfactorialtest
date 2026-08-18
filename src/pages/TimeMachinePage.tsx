@@ -46,6 +46,7 @@ export function TimeMachinePage() {
             <ChessBoard
               fen={activeEntry?.fen ?? reviewedEntries[0].fen}
               lastMove={lastMove}
+              lastMoveRating={activeEntry?.rating}
               playerColor={game?.playerColor ?? 'w'}
             />
             <ReviewInsight entry={activeEntry} index={activeIndex} depth={depth} />

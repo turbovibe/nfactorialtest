@@ -52,7 +52,8 @@
 .review-move span { overflow: hidden; font: 600 13px 'DM Mono'; text-overflow: ellipsis; }
 .review-move small { color: var(--move-color); font-size: 8px; text-transform: uppercase; }
 .review-move:hover, .review-move--active { border-color: var(--move-color); background: color-mix(in srgb, var(--move-color) 22%, transparent); }
-.review-move--blunder, .review-move--inaccuracy { --move-color: #ef6464; }
+.review-move--blunder { --move-color: #ef6464; }
+.review-move--inaccuracy { --move-color: #f1c84b; }
 .review-move--fine { --move-color: #65a975; }
 .review-move--good { --move-color: #80ca80; }
 .review-move--brilliant { --move-color: #6ecde8; }
@@ -62,7 +63,8 @@
 .review-insight h2 { margin: 7px 0; font-size: 21px; }
 .review-insight h2 em { margin-left: 6px; color: var(--insight-color); font: 500 10px 'DM Mono'; text-transform: uppercase; }
 .review-insight p { margin: 0; color: var(--muted); font-size: 12px; line-height: 1.55; }
-.review-insight--blunder, .review-insight--inaccuracy { --insight-color: #ef6464; }
+.review-insight--blunder { --insight-color: #ef6464; }
+.review-insight--inaccuracy { --insight-color: #f1c84b; }
 .review-insight--fine, .review-insight--good { --insight-color: #78c47f; }
 .review-insight--brilliant { --insight-color: #6ecde8; }
 
@@ -72,7 +74,8 @@
 .review-summary__heading span, .review-summary__row span { text-align: left; }
 .review-summary__row { padding: 6px 0; color: #77bd7e; font-size: 11px; }
 .review-summary__row--brilliant { color: #6ecde8; }
-.review-summary__row--inaccuracy, .review-summary__row--blunder { color: #ef6464; }
+.review-summary__row--inaccuracy { color: #f1c84b; }
+.review-summary__row--blunder { color: #ef6464; }
 
 .review-loading, .review-error { margin: 24px; }
 .review-loading { height: 5px; border-radius: 10px; background: var(--line); }

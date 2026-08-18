@@ -16,6 +16,10 @@ export type SavedGame = {
 
 const latestGameKey = 'mirror-move-latest-game';
 
+export function cleanMoveSan(move: string): string {
+  return move.replace(/^(?:…|\.\.\.)\s*/u, '');
+}
+
 export function saveLatestGame(game: SavedGame) {
   try {
     localStorage.setItem(latestGameKey, JSON.stringify(game));
@@ -31,7 +35,13 @@ export function loadLatestGame(): SavedGame | null {
     const game = JSON.parse(saved) as SavedGame;
     if (!Array.isArray(game.entries) || !['w', 'b'].includes(game.playerColor)) return null;
     if (!game.entries.every((entry) => typeof entry.fen === 'string' && typeof entry.move === 'string')) return null;
-    return game;
+    return {
+      ...game,
+      entries: game.entries.map((entry) => ({
+        ...entry,
+        move: cleanMoveSan(entry.move),
+      })),
+    };
   } catch {
     return null;
   }

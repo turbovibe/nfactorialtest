@@ -1,5 +1,5 @@
 import { Chess, type Square } from 'chess.js';
-import type { TimelineEntry } from './gameTimeline';
+import { cleanMoveSan, type TimelineEntry } from './gameTimeline';
 
 export type MoveSquares = {
   from: Square;
@@ -12,7 +12,7 @@ export function findMoveSquares(entries: TimelineEntry[], activeIndex: number): 
   if (!before || !current) return undefined;
 
   try {
-    const move = new Chess(before.fen).move(current.move);
+    const move = new Chess(before.fen).move(cleanMoveSan(current.move));
     return { from: move.from, to: move.to };
   } catch {
     return undefined;

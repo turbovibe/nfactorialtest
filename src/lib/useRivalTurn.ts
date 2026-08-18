@@ -51,7 +51,7 @@ export function useRivalTurn(options: RivalTurnOptions) {
         setFen(next.fen());
         setTimeline((current) => {
           const entry: TimelineEntry = {
-            fen: next.fen(), move: `…${played.san}`,
+            fen: next.fen(), move: played.san,
           };
           const updated = [...current, entry];
           setViewIndex(updated.length - 1);

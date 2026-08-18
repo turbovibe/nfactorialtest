@@ -1,5 +1,5 @@
 import { Chess } from 'chess.js';
-import type { TimelineEntry } from './gameTimeline';
+import { cleanMoveSan, type TimelineEntry } from './gameTimeline';
 import { StockfishEngine, type EngineAnalysis } from './stockfishEngine';
 import type { MoveRating } from './moveRating';
 
@@ -19,8 +19,12 @@ function terminalScore(fen: string): number | null {
 
 function playedUci(fen: string, move: string): string | null {
   const position = new Chess(fen);
-  const played = position.move(move);
-  return played ? `${played.from}${played.to}${played.promotion ?? ''}` : null;
+  try {
+    const played = position.move(cleanMoveSan(move));
+    return `${played.from}${played.to}${played.promotion ?? ''}`;
+  } catch {
+    return null;
+  }
 }
 
 function bestMoveSan(fen: string, uci: string | null): string | undefined {

@@ -4,6 +4,7 @@ export type EngineStatus = 'idle' | 'loading' | 'ready' | 'fallback';
 
 type PendingSearch = {
   resolve: (result: EngineAnalysis) => void;
+  reject: (error: Error) => void;
   timeout: number;
   scoreCp?: number;
   depth: number;
@@ -97,17 +98,29 @@ export class StockfishEngine {
   }
 
   private search(fen: string, command: string, timeoutMs: number): Promise<EngineAnalysis> {
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
+      let search: PendingSearch;
       const timeout = window.setTimeout(() => {
         this.worker.postMessage('stop');
+        window.setTimeout(() => {
+          if (this.pendingSearch !== search) return;
+          this.pendingSearch = undefined;
+          search.reject(new Error('Stockfish search timed out'));
+        }, 1_000);
       }, timeoutMs);
-      this.pendingSearch = { resolve, timeout, depth: 0 };
+      search = { resolve, reject, timeout, depth: 0 };
+      this.pendingSearch = search;
       this.worker.postMessage(`position fen ${fen}`);
       this.worker.postMessage(command);
     });
   }
 
   terminate() {
+    if (this.pendingSearch) {
+      window.clearTimeout(this.pendingSearch.timeout);
+      this.pendingSearch.resolve({ bestMove: null, scoreCp: null, depth: 0 });
+      this.pendingSearch = undefined;
+    }
     this.worker.terminate();
   }
 }

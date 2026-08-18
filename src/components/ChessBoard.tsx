@@ -1,6 +1,7 @@
 import { useRef, useState, type PointerEvent } from 'react';
 import { Chess, type Color, type Square } from 'chess.js';
 import type { MoveSquares } from '../lib/moveSquares';
+import { ratingLabels, type MoveRating } from '../lib/moveRating';
 import { useBoardAnnotations } from '../lib/useBoardAnnotations';
 import { BoardAnnotations } from './BoardAnnotations';
 
@@ -10,6 +11,7 @@ type ChessBoardProps = {
   targets?: Square[];
   interactive?: boolean;
   lastMove?: MoveSquares;
+  lastMoveRating?: MoveRating;
   playerColor: Color;
   onSquareClick?: (square: Square) => void;
   onMove?: (from: Square, to: Square) => void;
@@ -21,6 +23,14 @@ const symbols: Record<string, string> = {
 };
 
 const files = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
+
+const ratingMarks: Record<MoveRating, string> = {
+  brilliant: '!!',
+  good: '★',
+  fine: '✓',
+  inaccuracy: '?!',
+  blunder: '??',
+};
 
 type PieceDrag = {
   from: Square;
@@ -34,7 +44,9 @@ type PieceDrag = {
   angle: number;
 };
 
-export function ChessBoard({ fen, selected, targets = [], interactive, lastMove, playerColor, onSquareClick, onMove }: ChessBoardProps) {
+export function ChessBoard({
+  fen, selected, targets = [], interactive, lastMove, lastMoveRating, playerColor, onSquareClick, onMove,
+}: ChessBoardProps) {
   const [drag, setDrag] = useState<PieceDrag>();
   const annotations = useBoardAnnotations(fen);
   const lastPointer = useRef({ x: 0, y: 0 });
@@ -90,7 +102,7 @@ export function ChessBoard({ fen, selected, targets = [], interactive, lastMove,
   }
 
   return (
-    <div className="chessboard" aria-label="Chess board">
+    <div className={`chessboard${lastMoveRating ? ` chessboard--rating-${lastMoveRating}` : ''}`} aria-label="Chess board">
       {squares.map((square, index) => {
         const piece = game.get(square);
         const isLight = (index + Math.floor(index / 8)) % 2 === 0;
@@ -123,6 +135,15 @@ export function ChessBoard({ fen, selected, targets = [], interactive, lastMove,
                 onPointerCancel={() => setDrag(undefined)}
               >
                 {symbols[`${piece.color}${piece.type}`]}
+              </span>
+            )}
+            {piece && square === lastMove?.to && lastMoveRating && (
+              <span
+                className="move-rating-badge"
+                title={ratingLabels[lastMoveRating]}
+                aria-label={ratingLabels[lastMoveRating]}
+              >
+                {ratingMarks[lastMoveRating]}
               </span>
             )}
             {isTarget && <span className={piece ? 'capture-ring' : 'move-dot'} />}

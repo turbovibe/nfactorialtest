@@ -134,6 +134,7 @@ export function GamePage() {
           game={game}
           fen={viewedFen}
           lastMove={lastMove}
+          lastMoveRating={reviewedEntries[viewIndex]?.rating}
           selected={selected}
           targets={targets}
           playerColor={playerColor}

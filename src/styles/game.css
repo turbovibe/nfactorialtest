@@ -38,8 +38,14 @@
 .square--light { background: var(--gray); }
 .square--dark { background: var(--navy); }
 .square--selected { box-shadow: inset 0 0 0 5px var(--lime); }
-.square--last-from { box-shadow: inset 0 0 0 999px rgba(73, 151, 196, .32), inset 0 -4px 0 #6fc7ee; }
-.square--last-to { box-shadow: inset 0 0 0 999px rgba(73, 151, 196, .48), inset 0 -5px 0 #8cdbff; }
+.chessboard { --move-highlight: #6fc7ee; }
+.chessboard--rating-brilliant { --move-highlight: #6ecde8; }
+.chessboard--rating-good { --move-highlight: #80ca80; }
+.chessboard--rating-fine { --move-highlight: #65a975; }
+.chessboard--rating-inaccuracy { --move-highlight: #f1c84b; }
+.chessboard--rating-blunder { --move-highlight: #ef6464; }
+.square--last-from { box-shadow: inset 0 0 0 999px color-mix(in srgb, var(--move-highlight) 34%, transparent), inset 0 -4px 0 var(--move-highlight); }
+.square--last-to { box-shadow: inset 0 0 0 999px color-mix(in srgb, var(--move-highlight) 52%, transparent), inset 0 -5px 0 var(--move-highlight); }
 .square--annotated::after { position: absolute; z-index: 1; inset: 0; background: rgba(226, 65, 65, .68); content: ''; pointer-events: none; }
 .board-annotations { position: absolute; z-index: 5; inset: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; }
 .board-arrow { fill: none; stroke: rgba(241, 166, 20, .82); stroke-linecap: round; stroke-linejoin: round; stroke-width: 14px; }
@@ -51,6 +57,7 @@
 .dragged-piece { position: fixed; z-index: 1000; display: grid; place-items: center; font-family: 'Times New Roman', Georgia, serif; font-size: clamp(34px, 5.5vw, 68px); font-weight: 700; line-height: 1; pointer-events: none; user-select: none; will-change: left, top, transform; transition: transform 90ms cubic-bezier(.2, .8, .3, 1.25); filter: drop-shadow(0 12px 8px rgba(0, 0, 0, .25)); }
 .piece--w { color: var(--white); -webkit-text-stroke: 1.4px var(--black); paint-order: stroke fill; text-shadow: 0 2px 2px rgba(0, 0, 0, .3); }
 .piece--b { color: var(--black); -webkit-text-stroke: 1.4px var(--white); paint-order: stroke fill; text-shadow: 0 2px 2px rgba(255, 255, 255, .3); }
+.move-rating-badge { position: absolute; z-index: 4; top: 5px; right: 5px; min-width: 21px; height: 21px; display: grid; place-items: center; padding: 0 4px; border: 2px solid rgba(255,255,255,.9); border-radius: 999px; background: var(--move-highlight); color: #071018; box-shadow: 0 3px 10px rgba(0,0,0,.38); font: 800 10px 'DM Mono'; pointer-events: none; }
 .move-dot { position: absolute; z-index: 3; width: 18%; aspect-ratio: 1; border-radius: 50%; background: rgba(255, 163, 19, .92); }
 .capture-ring { position: absolute; z-index: 3; inset: 8%; border: 5px solid var(--lime); border-radius: 50%; }
 .rank-label, .file-label { position: absolute; z-index: 4; color: rgba(0, 0, 0, .78); font: 600 clamp(8px, .85vw, 11px) 'DM Mono'; pointer-events: none; }
