@@ -34,5 +34,31 @@
 .answer-feedback--correct { color: #dce9cc; border-color: #92b96b; background: rgba(108,154,72,.1); }
 .game-page .tool-nav { margin-bottom: 0; }
 .game-toolbar { display: flex; justify-content: flex-end; align-items: center; gap: 18px; min-height: 54px; color: var(--muted); font: 11px 'DM Mono'; }
+.detective-workspace { max-width: 980px; }
+.detective-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-top: 36px; }
+.detective-stat { padding: 24px; border: 1px solid var(--line); border-radius: 12px; background: rgba(255,255,255,.025); }
+.detective-stat strong { display: block; margin-bottom: 7px; font-size: 34px; }
+.detective-stat span { color: var(--muted); font: 10px 'DM Mono'; text-transform: uppercase; }
+.detective-stat--brilliant strong { color: #6ecde8; }
+.detective-stat--blunder strong { color: #ef6464; }
+.recent-games { margin-top: 18px; overflow: hidden; border: 1px solid var(--line); border-radius: 14px; background: rgba(13,18,25,.85); }
+.recent-games__heading { display: flex; justify-content: space-between; align-items: center; padding: 24px; border-bottom: 1px solid var(--line); }
+.recent-games__heading span { color: var(--gold); font: 9px 'DM Mono'; text-transform: uppercase; }
+.recent-games__heading h2 { margin: 5px 0 0; font-size: 22px; }
+.recent-games__heading > b { color: var(--muted); font: 10px 'DM Mono'; text-transform: uppercase; }
+.recent-games__list > button { width: 100%; display: grid; grid-template-columns: 1.2fr 1fr 1.3fr auto; gap: 18px; align-items: center; padding: 18px 24px; border: 0; border-bottom: 1px solid var(--line); color: var(--ink); background: transparent; text-align: left; transition: background .2s ease; }
+.recent-games__list > button:last-child { border-bottom: 0; }
+.recent-games__list > button:hover { background: rgba(255,163,19,.06); }
+.recent-games__list span { display: grid; gap: 4px; }
+.recent-games__list small { color: var(--muted); font-size: 11px; }
+.recent-games__ratings { grid-template-columns: repeat(2, max-content) !important; gap: 12px !important; }
+.recent-games__ratings i, .recent-games__ratings em { font: 10px 'DM Mono'; font-style: normal; }
+.recent-games__ratings i { color: #6ecde8; }
+.recent-games__ratings em { color: #ef8181; }
+.recent-games__empty, .history-message { margin: 0; padding: 28px 24px; color: var(--muted); }
+.history-message { margin-top: 30px; border: 1px solid var(--line); border-radius: 10px; }
+.history-message--error { color: #ef9a9a; }
+.detective-play-link { display: inline-block; margin-top: 20px; color: var(--gold); font-weight: 700; }
 @media (max-width: 800px) { .tools-page { padding: 0 20px 50px; } .tool-nav { grid-template-columns: minmax(0, 1fr) auto; gap: 10px; padding-top: 15px; } .tool-tabs { width: 100%; grid-column: 1 / -1; grid-row: 2; height: auto; justify-content: flex-start; overflow-x: auto; overscroll-behavior-x: contain; scrollbar-width: none; scroll-snap-type: x proximity; } .tool-tabs::-webkit-scrollbar { display: none; } .tool-tab { flex: 0 0 auto; min-height: 46px; padding: 13px 12px; scroll-snap-align: start; } .tool-grid { grid-template-columns: 1fr; } .tool-card { min-height: 0; } .lesson-timeline { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 700px) { .detective-stats { grid-template-columns: 1fr; } .recent-games__list > button { grid-template-columns: 1fr auto; } .recent-games__list > button > span:nth-child(2), .recent-games__ratings { grid-column: 1; } .recent-games__list > button > strong { grid-column: 2; grid-row: 1 / 4; } }
 @media (max-width: 420px) { .tool-nav .brand { overflow: hidden; font-size: 12px; text-overflow: ellipsis; white-space: nowrap; } .sign-out { padding: 9px 10px; font-size: 12px; } .tool-tab { padding-inline: 10px; font-size: 12px; } .dashboard-hero { padding: 55px 0 38px; } .dashboard-hero h1, .tool-workspace > h1 { font-size: 40px; } }

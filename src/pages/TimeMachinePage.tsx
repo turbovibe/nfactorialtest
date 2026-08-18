@@ -48,6 +48,7 @@ export function TimeMachinePage() {
               lastMove={lastMove}
               lastMoveRating={activeEntry?.rating}
               playerColor={game?.playerColor ?? 'w'}
+              onReplayStep={(offset) => changeMove(activeIndex + offset)}
             />
             <ReviewInsight entry={activeEntry} index={activeIndex} depth={depth} />
           </section>

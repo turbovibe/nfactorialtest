@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Chess, type Color, type Square } from 'chess.js';
 import { useLocation } from 'wouter';
 import { ToolNav } from '../components/ToolNav';
@@ -17,6 +17,7 @@ import { useRivalTurn } from '../lib/useRivalTurn';
 import { useMoveCommentary } from '../lib/useMoveCommentary';
 import { useGameReview } from '../lib/useGameReview';
 import { useGameEndOverlay } from '../lib/useGameEndOverlay';
+import { saveCompletedGame } from '../lib/gameHistory';
 
 const initialGame = new Chess();
 const initialTimeline: TimelineEntry[] = [{
@@ -32,6 +33,8 @@ export function GamePage() {
   const [elo, setElo] = useState(1200);
   const [playerColor, setPlayerColor] = useState<Color>('w');
   const [resigned, setResigned] = useState(false);
+  const [gameSessionId, setGameSessionId] = useState(() => crypto.randomUUID());
+  const savedSessionId = useRef<string | null>(null);
   const [, navigate] = useLocation();
   const { commentary, isCommenting, commentOnMove, resetCommentary } = useMoveCommentary();
   const game = useMemo(() => new Chess(fen), [fen]);
@@ -50,6 +53,15 @@ export function GamePage() {
   useEffect(() => {
     saveLatestGame({ entries: timeline, playerColor });
   }, [playerColor, timeline]);
+
+  useEffect(() => {
+    if (!isGameOver || reviewStatus !== 'ready' || reviewedEntries.length <= 1
+      || savedSessionId.current === gameSessionId) return;
+    savedSessionId.current = gameSessionId;
+    void saveCompletedGame(gameSessionId, playerColor, reviewedEntries).catch(() => {
+      if (savedSessionId.current === gameSessionId) savedSessionId.current = null;
+    });
+  }, [gameSessionId, isGameOver, playerColor, reviewStatus, reviewedEntries]);
 
   const targets = useMemo(() => {
     if (!selected || !isPresent) return [];
@@ -99,11 +111,17 @@ export function GamePage() {
     setSelected(undefined);
     setProfile(emptyProfile);
     setResigned(false);
+    setGameSessionId(crypto.randomUUID());
     closeOverlay();
     setTimeline([{ fen: fresh.fen(), move: 'Start' }]);
     setViewIndex(0);
     resetEngineStatus();
     resetCommentary();
+  }
+
+  function replayStep(offset: number) {
+    setSelected(undefined);
+    setViewIndex((current) => Math.max(0, Math.min(timeline.length - 1, current + offset)));
   }
 
   function chooseColor(color: Color) {
@@ -146,6 +164,7 @@ export function GamePage() {
           onMove={playMove}
           onNewGame={resetGame}
           onReview={() => navigate('/time-machine')}
+          onReplayStep={replayStep}
         />
         <div className="game-sidebar">
           <RivalPanel

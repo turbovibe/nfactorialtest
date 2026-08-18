@@ -1,25 +1,46 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { Link, useLocation } from 'wouter';
+import { DetectiveStats } from '../components/DetectiveStats';
+import { RecentGames } from '../components/RecentGames';
 import { ToolNav } from '../components/ToolNav';
-
-const answers = ['Move the same piece again', 'Look for checks and captures', 'Push any edge pawn'];
+import { loadGameHistory, type GameStats, type SavedGameRecord } from '../lib/gameHistory';
+import { saveLatestGame } from '../lib/gameTimeline';
 
 export function DetectivePage() {
-  const [answer, setAnswer] = useState<string>();
-  const isCorrect = answer === answers[1];
+  const [games, setGames] = useState<SavedGameRecord[]>([]);
+  const [stats, setStats] = useState<GameStats>({ games: 0, brilliantMoves: 0, blunders: 0 });
+  const [status, setStatus] = useState<'loading' | 'ready' | 'error'>('loading');
+  const [, navigate] = useLocation();
+
+  useEffect(() => {
+    void loadGameHistory()
+      .then((history) => {
+        setGames(history.recentGames);
+        setStats(history.stats);
+        setStatus('ready');
+      })
+      .catch(() => setStatus('error'));
+  }, []);
+
+  function openGame(game: SavedGameRecord) {
+    saveLatestGame({ entries: game.entries, playerColor: game.playerColor });
+    navigate('/time-machine');
+  }
 
   return (
     <main className="tools-page">
       <ToolNav />
-      <section className="tool-workspace">
+      <section className="tool-workspace detective-workspace">
         <p className="eyebrow">Tool 03</p><h1>Mistake Detective</h1>
-        <p className="workspace-lead">Train the thinking habit that helps you find hidden opportunities.</p>
-        <article className="detective-card">
-          <span>Case 001</span><h2>Your opponent left a piece unprotected. What should you examine first?</h2>
-          <div className="answer-list">
-            {answers.map((option) => <button onClick={() => setAnswer(option)} key={option}>{option}</button>)}
-          </div>
-          {answer && <p className={isCorrect ? 'answer-feedback answer-feedback--correct' : 'answer-feedback'}>{isCorrect ? 'Correct — forcing moves reveal tactical chances first.' : 'Not quite. Start with the moves your opponent must answer.'}</p>}
-        </article>
+        <p className="workspace-lead">Review your saved games and track the moments that can sharpen your play.</p>
+        {status === 'loading' && <p className="history-message">Loading your case archive…</p>}
+        {status === 'error' && (
+          <p className="history-message history-message--error">The archive is not ready yet. Apply the saved-games migration, then refresh.</p>
+        )}
+        {status === 'ready' && (
+          <><DetectiveStats stats={stats} /><RecentGames games={games} onOpen={openGame} /></>
+        )}
+        <Link className="detective-play-link" href="/game">Play and review a new game →</Link>
       </section>
     </main>
   );

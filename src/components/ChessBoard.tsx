@@ -1,9 +1,13 @@
-import { useRef, useState, type PointerEvent } from 'react';
 import { Chess, type Color, type Square } from 'chess.js';
+import { boardFiles, pieceSymbols } from '../lib/boardDisplay';
 import type { MoveSquares } from '../lib/moveSquares';
-import { ratingLabels, type MoveRating } from '../lib/moveRating';
+import type { MoveRating } from '../lib/moveRating';
 import { useBoardAnnotations } from '../lib/useBoardAnnotations';
+import { useBoardReplayKeys } from '../lib/useBoardReplayKeys';
+import { usePieceDrag } from '../lib/usePieceDrag';
+import { BoardPiece } from './BoardPiece';
 import { BoardAnnotations } from './BoardAnnotations';
+import { MoveRatingBadge } from './MoveRatingBadge';
 
 type ChessBoardProps = {
   fen: string;
@@ -13,96 +17,34 @@ type ChessBoardProps = {
   lastMove?: MoveSquares;
   lastMoveRating?: MoveRating;
   playerColor: Color;
+  onReplayStep?: (offset: number) => void;
   onSquareClick?: (square: Square) => void;
   onMove?: (from: Square, to: Square) => void;
 };
 
-const symbols: Record<string, string> = {
-  wp: '♟', wn: '♞', wb: '♝', wr: '♜', wq: '♛', wk: '♚',
-  bp: '♟', bn: '♞', bb: '♝', br: '♜', bq: '♛', bk: '♚',
-};
-
-const files = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
-
-const ratingMarks: Record<MoveRating, string> = {
-  brilliant: '!!',
-  good: '★',
-  fine: '✓',
-  inaccuracy: '?!',
-  blunder: '??',
-};
-
-type PieceDrag = {
-  from: Square;
-  symbol: string;
-  color: 'w' | 'b';
-  x: number;
-  y: number;
-  grabX: number;
-  grabY: number;
-  size: number;
-  angle: number;
-};
-
 export function ChessBoard({
-  fen, selected, targets = [], interactive, lastMove, lastMoveRating, playerColor, onSquareClick, onMove,
+  fen, selected, targets = [], interactive, lastMove, lastMoveRating, playerColor,
+  onReplayStep, onSquareClick, onMove,
 }: ChessBoardProps) {
-  const [drag, setDrag] = useState<PieceDrag>();
   const annotations = useBoardAnnotations(fen);
-  const lastPointer = useRef({ x: 0, y: 0 });
-  const hasMoved = useRef(false);
+  const handleReplayKey = useBoardReplayKeys(onReplayStep);
+  const pieceDrag = usePieceDrag(playerColor, onSquareClick, onMove);
+  const { drag } = pieceDrag;
   const game = new Chess(fen);
   const squares = Array.from({ length: 64 }, (_, index) => {
-    const file = files[index % 8];
+    const file = boardFiles[index % 8];
     const rank = 8 - Math.floor(index / 8);
     return `${file}${rank}` as Square;
   });
   if (playerColor === 'b') squares.reverse();
 
-  function startDragging(event: PointerEvent<HTMLSpanElement>, square: Square, symbol: string) {
-    if (event.button !== 0) return;
-    const bounds = event.currentTarget.getBoundingClientRect();
-    event.currentTarget.setPointerCapture(event.pointerId);
-    lastPointer.current = { x: event.clientX, y: event.clientY };
-    hasMoved.current = false;
-    setDrag({
-      from: square,
-      symbol,
-      color: playerColor,
-      x: event.clientX,
-      y: event.clientY,
-      grabX: event.clientX - bounds.left,
-      grabY: event.clientY - bounds.top,
-      size: bounds.width,
-      angle: 0,
-    });
-    onSquareClick?.(square);
-  }
-
-  function moveDraggedPiece(event: PointerEvent<HTMLSpanElement>) {
-    if (!drag) return;
-    const distance = Math.hypot(event.clientX - lastPointer.current.x, event.clientY - lastPointer.current.y);
-    if (distance > 2) hasMoved.current = true;
-    const speedX = event.clientX - lastPointer.current.x;
-    lastPointer.current = { x: event.clientX, y: event.clientY };
-    setDrag((current) => current && ({
-      ...current,
-      x: event.clientX,
-      y: event.clientY,
-      angle: Math.max(-24, Math.min(24, speedX * 1.8)),
-    }));
-  }
-
-  function stopDragging(event: PointerEvent<HTMLSpanElement>) {
-    if (!drag) return;
-    const target = document.elementFromPoint(event.clientX, event.clientY)?.closest<HTMLElement>('[data-square]');
-    const destination = target?.dataset.square as Square | undefined;
-    if (hasMoved.current && destination && destination !== drag.from) onMove?.(drag.from, destination);
-    setDrag(undefined);
-  }
-
   return (
-    <div className={`chessboard${lastMoveRating ? ` chessboard--rating-${lastMoveRating}` : ''}`} aria-label="Chess board">
+    <div
+      className={`chessboard${lastMoveRating ? ` chessboard--rating-${lastMoveRating}` : ''}`}
+      aria-label={onReplayStep ? 'Chess board. Use arrow keys to move through the game.' : 'Chess board'}
+      tabIndex={onReplayStep ? 0 : undefined}
+      onKeyDown={handleReplayKey}
+    >
       {squares.map((square, index) => {
         const piece = game.get(square);
         const isLight = (index + Math.floor(index / 8)) % 2 === 0;
@@ -126,25 +68,21 @@ export function ChessBoard({
             aria-label={`${square}${piece ? ` ${piece.color}${piece.type}` : ''}`}
           >
             {piece && (
-              <span
-                className={`piece piece--${piece.color} ${interactive && piece.color === playerColor ? 'piece--interactive' : ''} ${drag?.from === square ? 'piece--dragging' : ''}`}
-                onClick={(event) => event.stopPropagation()}
-                onPointerDown={interactive && piece.color === playerColor ? (event) => startDragging(event, square, symbols[`${piece.color}${piece.type}`]) : undefined}
-                onPointerMove={moveDraggedPiece}
-                onPointerUp={stopDragging}
-                onPointerCancel={() => setDrag(undefined)}
-              >
-                {symbols[`${piece.color}${piece.type}`]}
-              </span>
+              <BoardPiece
+                color={piece.color}
+                symbol={pieceSymbols[`${piece.color}${piece.type}`]}
+                interactive={Boolean(interactive && piece.color === playerColor)}
+                dragging={drag?.from === square}
+                onStart={interactive && piece.color === playerColor
+                  ? (event) => pieceDrag.start(event, square, pieceSymbols[`${piece.color}${piece.type}`])
+                  : undefined}
+                onMove={pieceDrag.move}
+                onStop={pieceDrag.stop}
+                onCancel={pieceDrag.cancel}
+              />
             )}
             {piece && square === lastMove?.to && lastMoveRating && (
-              <span
-                className="move-rating-badge"
-                title={ratingLabels[lastMoveRating]}
-                aria-label={ratingLabels[lastMoveRating]}
-              >
-                {ratingMarks[lastMoveRating]}
-              </span>
+              <MoveRatingBadge rating={lastMoveRating} />
             )}
             {isTarget && <span className={piece ? 'capture-ring' : 'move-dot'} />}
             {index % 8 === 0 && <span className="rank-label">{square[1]}</span>}

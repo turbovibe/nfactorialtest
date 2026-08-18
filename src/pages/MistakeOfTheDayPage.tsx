@@ -11,7 +11,7 @@ export function MistakeOfTheDayPage() {
           <h1>Mistake of the Day</h1>
           <p>One careless move changed everything. Can you spot why?</p>
         </div>
-        <span>Daily case · 01</span>
+        <span>Daily puzzle set</span>
       </header>
       <DailyMistakePuzzle />
     </main>

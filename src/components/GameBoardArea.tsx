@@ -21,12 +21,13 @@ type GameBoardAreaProps = {
   onMove: (from: Square, to: Square) => void;
   onNewGame: () => void;
   onReview: () => void;
+  onReplayStep: (offset: number) => void;
 };
 
 export function GameBoardArea(props: GameBoardAreaProps) {
   const {
     game, fen, lastMove, lastMoveRating, selected, targets, playerColor, isThinking, isGameOver, resigned,
-    showEndOverlay, onSquareClick, onMove, onNewGame, onReview,
+    showEndOverlay, onSquareClick, onMove, onNewGame, onReview, onReplayStep,
   } = props;
   const result = getGameResult(game, playerColor, resigned);
 
@@ -47,6 +48,7 @@ export function GameBoardArea(props: GameBoardAreaProps) {
           playerColor={playerColor}
           onSquareClick={onSquareClick}
           onMove={onMove}
+          onReplayStep={onReplayStep}
         />
         {showEndOverlay && result && (
           <GameEndOverlay result={result} onNewGame={onNewGame} onReview={onReview} />

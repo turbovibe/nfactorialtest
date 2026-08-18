@@ -33,6 +33,7 @@
 .player-row small { color: var(--muted); font: 10px 'DM Mono'; }
 
 .chessboard { position: relative; box-sizing: border-box; width: 100%; aspect-ratio: 1; display: grid; grid-template: repeat(8, minmax(0, 1fr)) / repeat(8, minmax(0, 1fr)); overflow: hidden; border: 10px solid #111823; border-radius: 6px; box-shadow: 0 28px 65px rgba(0,0,0,.42), 0 0 0 1px #303a48; }
+.chessboard:focus-visible { outline: 3px solid var(--move-highlight, #6fc7ee); outline-offset: 4px; }
 .square { position: relative; display: grid; place-items: center; width: 100%; min-width: 0; min-height: 0; padding: 0; overflow: hidden; border: 0; border-radius: 0; }
 .square[aria-disabled='true'] { cursor: default; }
 .square--light { background: var(--gray); }
