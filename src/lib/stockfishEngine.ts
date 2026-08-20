@@ -1,5 +1,8 @@
 const stockfishScriptUrl = '/stockfish/stockfish-18-lite-single.js';
 
+export const STOCKFISH_MIN_ELO = 1300;
+export const STOCKFISH_MAX_ELO = 3200;
+
 export type EngineStatus = 'idle' | 'loading' | 'ready' | 'fallback';
 
 type PendingSearch = {
@@ -80,14 +83,16 @@ export class StockfishEngine {
 
   async findMove(fen: string, elo: number): Promise<string | null> {
     await this.ready;
-    const engineElo = Math.max(1320, Math.min(3190, elo));
-    const maximumStrength = elo >= 3200;
-    this.worker.postMessage(`setoption name UCI_LimitStrength value ${maximumStrength ? 'false' : 'true'}`);
-    this.worker.postMessage(maximumStrength
-      ? 'setoption name Skill Level value 20'
-      : `setoption name UCI_Elo value ${engineElo}`);
-    const thinkTime = Math.round(300 + (Math.min(elo, 3200) / 3200) * 900);
-    const result = await this.search(fen, `go movetime ${thinkTime}`, 5_000);
+    const engineElo = Math.max(STOCKFISH_MIN_ELO, Math.min(STOCKFISH_MAX_ELO, elo));
+    const strengthProgress = (engineElo - STOCKFISH_MIN_ELO)
+      / (STOCKFISH_MAX_ELO - STOCKFISH_MIN_ELO);
+    const thinkTime = Math.round(1_400 + strengthProgress * 3_600);
+    const isTrainingLevel = engineElo === STOCKFISH_MIN_ELO;
+    this.worker.postMessage(`setoption name UCI_LimitStrength value ${isTrainingLevel ? 'true' : 'false'}`);
+    this.worker.postMessage(isTrainingLevel
+      ? 'setoption name UCI_Elo value 1320'
+      : 'setoption name Skill Level value 20');
+    const result = await this.search(fen, `go movetime ${thinkTime}`, 9_000);
     return result.bestMove;
   }
 
@@ -127,14 +132,7 @@ export class StockfishEngine {
 
 let searchQueue = Promise.resolve<string | null>(null);
 
-function addBeginnerMistakes(bestMove: string | null, legalMoves: string[], elo: number): string | null {
-  if (!bestMove || elo >= 1320) return bestMove;
-  const accuracy = Math.max(0, (elo - 100) / 1220);
-  if (Math.random() <= accuracy || legalMoves.length === 0) return bestMove;
-  return legalMoves[Math.floor(Math.random() * legalMoves.length)];
-}
-
-export function findStockfishMove(fen: string, elo: number, legalMoves: string[]): Promise<string | null> {
+export function findStockfishMove(fen: string, elo: number): Promise<string | null> {
   searchQueue = searchQueue.catch(() => null).then(async () => {
     const engine = new StockfishEngine();
     try {
@@ -143,5 +141,5 @@ export function findStockfishMove(fen: string, elo: number, legalMoves: string[]
       engine.terminate();
     }
   });
-  return searchQueue.then((move) => addBeginnerMistakes(move, legalMoves, elo));
+  return searchQueue;
 }

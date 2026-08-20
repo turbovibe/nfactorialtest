@@ -70,8 +70,8 @@ export function Auth({ onSignIn }: AuthProps) {
       <h1>{mode === 'signin' ? 'Welcome back.' : 'Create your account.'}</h1>
       <p className="auth-card__intro">
         {mode === 'signin'
-          ? 'Sign in to continue playing against Echo.'
-          : 'Save your games and watch Echo learn how you play.'}
+          ? 'Sign in to continue playing against Miro.'
+          : 'Save your games and watch Miro learn how you play.'}
       </p>
 
       <form onSubmit={handleSubmit} className="auth-form">

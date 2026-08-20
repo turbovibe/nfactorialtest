@@ -8,7 +8,7 @@ type GameEndOverlayProps = {
 
 const resultCopy: Record<GameResult, { eyebrow: string; title: string; message: string }> = {
   win: { eyebrow: 'Game over', title: 'You win!', message: 'Great game. Review the key moments with Stockfish.' },
-  loss: { eyebrow: 'Game over', title: 'Echo wins', message: 'Every loss contains clues for your next game.' },
+  loss: { eyebrow: 'Game over', title: 'Miro wins', message: 'Every loss contains clues for your next game.' },
   draw: { eyebrow: 'Game over', title: 'Draw', message: 'A balanced battle. See where the advantage changed.' },
 };
 

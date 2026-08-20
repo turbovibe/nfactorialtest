@@ -2,8 +2,7 @@ import { Link, useLocation } from 'wouter';
 import { supabase } from '../lib/supabase';
 
 const tabs = [
-  { href: '/home', label: 'Home' },
-  { href: '/game', label: 'Play Echo' },
+  { href: '/game', label: 'Play Miro' },
   { href: '/time-machine', label: 'Time Machine' },
   { href: '/detective', label: 'Mistake Detective' },
   { href: '/mistake-of-the-day', label: 'Daily Mistake' },
@@ -19,7 +18,7 @@ export function ToolNav() {
 
   return (
     <header className="tool-nav">
-      <Link className="brand" href="/home">MIRROR MOVE</Link>
+      <Link className="brand" href="/game">MIRROR MOVE</Link>
       <nav className="tool-tabs" aria-label="Tools">
         {tabs.map((tab) => (
           <Link

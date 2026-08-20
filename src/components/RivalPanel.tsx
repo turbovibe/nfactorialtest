@@ -20,7 +20,7 @@ export function RivalPanel({ profile, isThinking, commentary, isCommenting, elo,
     <aside className="rival-panel">
       <div className="rival-heading">
         <div className="rival-avatar">♞</div>
-        <div><span>Your adaptive rival</span><h2>Echo</h2></div>
+        <div><span>Your adaptive rival</span><h2>Miro</h2></div>
         <i className={isThinking || isCommenting ? 'thinking-pulse' : ''} />
       </div>
       <blockquote aria-live="polite" className={isCommenting ? 'rival-comment--loading' : ''}>“{commentary}”</blockquote>

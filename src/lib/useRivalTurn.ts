@@ -36,10 +36,7 @@ export function useRivalTurn(options: RivalTurnOptions) {
       const next = new Chess(game.fen());
       const legalMoves = next.moves({ verbose: true });
       setEngineStatus('loading');
-      const engineMove = await findStockfishMove(
-        next.fen(), eloRef.current,
-        legalMoves.map((move) => `${move.from}${move.to}${move.promotion ?? ''}`),
-      ).catch(() => null);
+      const engineMove = await findStockfishMove(next.fen(), eloRef.current).catch(() => null);
       if (cancelled) return;
       setEngineStatus(engineMove ? 'ready' : 'fallback');
       const rivalMove = engineMove

@@ -84,13 +84,13 @@ export function profileLabel(profile: PlayerProfile): string {
 
 export function adaptationSummary(profile: PlayerProfile): string {
   const summaries: Record<PlayerStyle, string> = {
-    learning: 'Echo needs two of your moves before choosing a counter-style.',
-    tactical: 'Echo now avoids loose pieces and values forcing replies.',
-    queen: 'Echo develops minor pieces quickly to challenge your queen.',
-    builder: 'Echo attacks your pawn chain and contests central squares.',
-    positional: 'Echo fights for development and safe king placement.',
-    central: 'Echo challenges your central space before it becomes an attack.',
-    balanced: 'Echo keeps flexible moves and reduces easy counterplay.',
+    learning: 'Miro needs two of your moves before choosing a counter-style.',
+    tactical: 'Miro now avoids loose pieces and values forcing replies.',
+    queen: 'Miro develops minor pieces quickly to challenge your queen.',
+    builder: 'Miro attacks your pawn chain and contests central squares.',
+    positional: 'Miro fights for development and safe king placement.',
+    central: 'Miro challenges your central space before it becomes an attack.',
+    balanced: 'Miro keeps flexible moves and reduces easy counterplay.',
   };
   return summaries[playerStyle(profile)];
 }

@@ -4,9 +4,9 @@ import { supabase } from '../lib/supabase';
 import { MovePredictionHook } from '../components/MovePredictionHook';
 
 const benefits = [
-  { number: '01', title: 'Play a full game', text: 'Challenge Echo on a complete interactive board with legal moves and instant responses.', detail: 'Real chess, move by move' },
-  { number: '02', title: 'Meet your adaptive rival', text: 'Echo notices how you develop, attack, and use your queen, then changes what it prioritises.', detail: 'A different rival for every player' },
-  { number: '03', title: 'See your playing style', text: 'Watch Echo build a live profile of your habits and explain what it has learned about you.', detail: 'Live style reading' },
+  { number: '01', title: 'Play a full game', text: 'Challenge Miro on a complete interactive board with legal moves and instant responses.', detail: 'Real chess, move by move' },
+  { number: '02', title: 'Meet your adaptive rival', text: 'Miro notices how you develop, attack, and use your queen, then changes what it prioritises.', detail: 'A different rival for every player' },
+  { number: '03', title: 'See your playing style', text: 'Watch Miro build a live profile of your habits and explain what it has learned about you.', detail: 'Live style reading' },
   { number: '04', title: 'Rewind any position', text: 'Use the Time Machine to revisit earlier moves and understand exactly where the game changed.', detail: 'Explore without losing the game' },
   { number: '05', title: 'Solve your mistakes', text: 'Mistake Detective gives you a useful clue instead of spoiling the strongest move.', detail: 'Learn the thinking, not the answer' },
 ];
@@ -18,11 +18,11 @@ export function HomePage() {
 
   useEffect(() => {
     void supabase.auth.getSession().then(({ data }) => {
-      if (data.session) navigate('/home', { replace: true });
+      if (data.session) navigate('/game', { replace: true });
     });
 
     const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
-      if (session) navigate('/home', { replace: true });
+      if (session) navigate('/game', { replace: true });
     });
 
     return () => listener.subscription.unsubscribe();
@@ -47,10 +47,10 @@ export function HomePage() {
           <p className="eyebrow">A rival built from your habits</p>
           <h1>It does not just play you.<br /><em>It learns you.</em></h1>
           <p className="hero__lead">
-            Meet Echo, a chess rival that notices how you attack, changes its plan,
+            Meet Miro, a chess rival that notices how you attack, changes its plan,
             and turns your biggest mistake into a mystery you can solve.
           </p>
-          <Link className="primary-link glow-button" data-glow href="/game">Challenge Echo <span>→</span></Link>
+          <Link className="primary-link glow-button" data-glow href="/game">Challenge Miro <span>→</span></Link>
         </div>
 
         <div className="hero__visual" aria-hidden="true">

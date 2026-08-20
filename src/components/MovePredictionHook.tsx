@@ -38,9 +38,9 @@ export function MovePredictionHook() {
         <ChessBoard fen={fen} playerColor="w" />
       </div>
       <div className="prediction-hook__copy">
-        <p className="eyebrow">Echo is already watching</p>
+        <p className="eyebrow">Miro is already watching</p>
         <h2 id="prediction-title">Your first move says more than you think.</h2>
-        <p>Choose how you would open. Echo will make its first prediction about your playing style.</p>
+        <p>Choose how you would open. Miro will make its first prediction about your playing style.</p>
         <div className="prediction-choices" aria-label="Choose your first move">
           {choices.map((choice) => (
             <button
@@ -54,9 +54,9 @@ export function MovePredictionHook() {
           ))}
         </div>
         <div className={selected ? 'prediction-result prediction-result--visible' : 'prediction-result'} aria-live="polite">
-          <span>{selected ? 'Echo predicts' : 'Waiting for your move'}</span>
+          <span>{selected ? 'Miro predicts' : 'Waiting for your move'}</span>
           <h3>{selected?.style ?? 'Choose an opening above'}</h3>
-          <p>{selected?.prediction ?? 'There is no wrong answer. Every choice gives Echo a new clue.'}</p>
+          <p>{selected?.prediction ?? 'There is no wrong answer. Every choice gives Miro a new clue.'}</p>
         </div>
       </div>
     </section>

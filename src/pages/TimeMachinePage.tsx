@@ -32,7 +32,7 @@ export function TimeMachinePage() {
       {reviewedEntries.length <= 1 ? (
         <section className="review-empty">
           <span>⌛</span><h2>No game to rewind yet</h2>
-          <p>Play a few moves against Echo, then come back here for a full review.</p>
+          <p>Play a few moves against Miro, then come back here for a full review.</p>
           <Link href="/game">Play a game</Link>
         </section>
       ) : (

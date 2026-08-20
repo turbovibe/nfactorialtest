@@ -15,7 +15,7 @@ export function RecentGames({ games, onOpen }: RecentGamesProps) {
         <div><span>Case archive</span><h2>Recent games</h2></div><b>{games.length} saved</b>
       </div>
       {games.length === 0 ? (
-        <p className="recent-games__empty">Finish a game against Echo to save its move review here.</p>
+        <p className="recent-games__empty">Finish a game against Miro to save its move review here.</p>
       ) : (
         <div className="recent-games__list">
           {games.map((game, index) => (

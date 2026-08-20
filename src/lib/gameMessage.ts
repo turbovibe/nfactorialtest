@@ -9,10 +9,10 @@ export function getGameResult(game: Chess, playerColor: Color, resigned: boolean
 }
 
 export function getGameMessage(game: Chess, isThinking: boolean, playerColor: Color, resigned: boolean): string {
-  if (resigned) return 'You resigned — Echo wins. Review the game and try again.';
-  if (game.isCheckmate()) return game.turn() === playerColor ? 'Echo wins — rewind and investigate.' : 'You checkmated Echo!';
+  if (resigned) return 'You resigned — Miro wins. Review the game and try again.';
+  if (game.isCheckmate()) return game.turn() === playerColor ? 'Miro wins — rewind and investigate.' : 'You checkmated Miro!';
   if (game.isDraw()) return 'Draw. A perfectly balanced mystery.';
-  if (game.inCheck()) return game.turn() === playerColor ? 'Your king is in check.' : 'Echo is in check.';
-  if (isThinking) return 'Echo is adapting…';
-  return game.turn() === playerColor ? 'Your move' : 'Echo’s move';
+  if (game.inCheck()) return game.turn() === playerColor ? 'Your king is in check.' : 'Miro is in check.';
+  if (isThinking) return 'Miro is adapting…';
+  return game.turn() === playerColor ? 'Your move' : 'Miro’s move';
 }

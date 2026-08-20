@@ -30,7 +30,7 @@ export function GamePage() {
   const [profile, setProfile] = useState<PlayerProfile>(emptyProfile);
   const [timeline, setTimeline] = useState<TimelineEntry[]>(initialTimeline);
   const [viewIndex, setViewIndex] = useState(0);
-  const [elo, setElo] = useState(1200);
+  const [elo, setElo] = useState(1600);
   const [playerColor, setPlayerColor] = useState<Color>('w');
   const [resigned, setResigned] = useState(false);
   const [gameSessionId, setGameSessionId] = useState(() => crypto.randomUUID());

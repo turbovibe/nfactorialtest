@@ -8,11 +8,11 @@ export function AuthPage() {
 
   useEffect(() => {
     void supabase.auth.getSession().then(({ data }) => {
-      if (data.session) navigate('/home', { replace: true });
+      if (data.session) navigate('/game', { replace: true });
     });
 
     const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
-      if (session) navigate('/home', { replace: true });
+      if (session) navigate('/game', { replace: true });
     });
 
     return () => listener.subscription.unsubscribe();
@@ -26,10 +26,10 @@ export function AuthPage() {
       </nav>
 
       <div className="auth-page__content">
-        <Auth onSignIn={() => navigate('/home', { replace: true })} />
+        <Auth onSignIn={() => navigate('/game', { replace: true })} />
         <aside className="auth-page__note" aria-hidden="true">
           <span className="auth-page__knight">♞</span>
-          <p>Every move tells Echo a little more about you.</p>
+          <p>Every move tells Miro a little more about you.</p>
         </aside>
       </div>
     </main>
